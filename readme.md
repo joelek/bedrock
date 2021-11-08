@@ -1,3 +1,3 @@
 # @joelek/bedrock
 
-Extensible serialization framework suitable for a multitude of applications.
+Extensible serialization library with distinguished, sort-order preserving encoding rules.
