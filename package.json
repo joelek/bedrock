@@ -5,7 +5,7 @@
 		"@types/node": "^16.7",
 		"typescript": "^4.4"
 	},
-	"license": "UNLICENSED",
+	"license": "MIT",
 	"main": "./dist/lib/index.js",
 	"name": "@joelek/bedrock",
 	"repository": {
