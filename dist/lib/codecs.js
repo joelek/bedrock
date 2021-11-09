@@ -2,6 +2,24 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Union = exports.UnionCodec = exports.Object = exports.ObjectCodec = exports.Tuple = exports.TupleCodec = exports.Record = exports.RecordCodec = exports.Array = exports.ArrayCodec = exports.Boolean = exports.BooleanCodec = exports.Unknown = exports.UnknownCodec = exports.UnknownValue = exports.Map = exports.MapCodec = exports.List = exports.ListCodec = exports.BigInt = exports.BigIntCodec = exports.Binary = exports.BinaryCodec = exports.String = exports.StringCodec = exports.Number = exports.NumberCodec = exports.True = exports.TrueCodec = exports.False = exports.FalseCodec = exports.Null = exports.NullCodec = exports.Any = exports.AnyCodec = exports.Codec = exports.Tag = void 0;
 const utils = require("./utils");
+class Packet {
+    constructor() { }
+    static decode(parser) {
+        parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
+        return parser.try((parser) => {
+            let length = utils.VarLength.decode(parser);
+            let payload = parser.chunk(length);
+            return payload;
+        });
+    }
+    static encode(payload) {
+        return utils.Chunk.concat([
+            utils.VarLength.encode(payload.length),
+            payload
+        ]);
+    }
+}
+;
 var Tag;
 (function (Tag) {
     Tag[Tag["NULL"] = 0] = "NULL";
@@ -18,19 +36,12 @@ var Tag;
 class Codec {
     constructor() { }
     decode(parser) {
-        parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
-        return parser.try((parser) => {
-            let length = utils.VarLength.decode(parser);
-            let payload = parser.chunk(length);
-            return this.decodePayload(payload);
-        });
+        let payload = Packet.decode(parser);
+        return this.decodePayload(payload);
     }
     encode(subject) {
         let payload = this.encodePayload(subject);
-        return utils.Chunk.concat([
-            utils.VarLength.encode(payload.length),
-            payload
-        ]);
+        return Packet.encode(payload);
     }
 }
 exports.Codec = Codec;
@@ -231,7 +242,7 @@ class StringCodec extends Codec {
         return parser.try((parser) => {
             utils.IntegerAssert.exactly(parser.unsigned(1), Tag.STRING);
             // @ts-ignore
-            let value = new TextDecoder().decode(parser.chunk()).normalize();
+            let value = new TextDecoder().decode(parser.chunk());
             return value;
         });
     }
@@ -242,7 +253,7 @@ class StringCodec extends Codec {
         let chunks = [];
         chunks.push(Uint8Array.of(Tag.STRING));
         // @ts-ignore
-        chunks.push(new TextEncoder().encode(subject.normalize()));
+        chunks.push(new TextEncoder().encode(subject));
         return utils.Chunk.concat(chunks);
     }
 }
@@ -403,13 +414,21 @@ class MapCodec extends Codec {
         encode = encode ?? ((key, subject) => exports.Any.encode(subject));
         let chunks = [];
         chunks.push(Uint8Array.of(Tag.MAP));
-        for (let key of globalThis.Object.keys(subject).sort()) {
+        let pairs = [];
+        for (let key in subject) {
             let value = subject[key];
             if (value === undefined) {
                 continue;
             }
-            chunks.push(exports.String.encode(key));
-            chunks.push(encode(key, value));
+            pairs.push({
+                key: exports.String.encodePayload(key),
+                value: encode(key, value)
+            });
+        }
+        pairs.sort((one, two) => utils.Chunk.comparePrefixes(one.key, two.key));
+        for (let pair of pairs) {
+            chunks.push(Packet.encode(pair.key));
+            chunks.push(pair.value);
         }
         return utils.Chunk.concat(chunks);
     }
