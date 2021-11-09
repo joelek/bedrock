@@ -121,7 +121,7 @@ function recordEquals(one: Record<string, any>, two: Record<string, any>): boole
 	test(`It should maintain number sort order.`, async () => {
 		let buffers = new Array<Uint8Array>();
 		for (let i = 0; i < 1000; i++) {
-			let number = 0xFFFFFFFF * (2.0 * Math.random() - 1.0);
+			let number = 0xFFFFFFFF * (2.0 * Math.random() - 1.0) + Math.random();
 			let buffer = codecs.Number.encodePayload(number);
 			buffers.push(buffer);
 		}
@@ -289,7 +289,11 @@ function recordEquals(one: Record<string, any>, two: Record<string, any>): boole
 	test(`It should maintain bigint sort order.`, async () => {
 		let buffers = new Array<Uint8Array>();
 		for (let i = 0; i < 1000; i++) {
-			let number = BigInt(Math.floor(0xFFFFFFFF * (2.0 * Math.random() - 1.0)));
+			let hex = "0x";
+			for (let i = 0; i < 128; i++) {
+				hex += Math.floor(256 * Math.random()).toString(16).padStart(2, "0");
+			}
+			let number = -(2n ** 1024n) + 2n * BigInt(hex);
 			let buffer = codecs.BigInt.encodePayload(number);
 			buffers.push(buffer);
 		}
