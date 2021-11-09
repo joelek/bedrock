@@ -432,13 +432,21 @@ export class MapCodec extends Codec<Record<string, any>> {
 		encode = encode ?? ((key, subject) => Any.encode(subject));
 		let chunks = [] as Array<Uint8Array>;
 		chunks.push(Uint8Array.of(Tag.MAP));
-		for (let key of globalThis.Object.keys(subject).sort()) {
+		let pairs = [] as Array<{ key: Uint8Array, value: Uint8Array }>;
+		for (let key in subject) {
 			let value = subject[key];
 			if (value === undefined) {
 				continue;
 			}
-			chunks.push(String.encode(key));
-			chunks.push(encode(key, value));
+			pairs.push({
+				key: String.encodePayload(key),
+				value: encode(key, value)
+			});
+		}
+		pairs.sort((one, two) => utils.Chunk.comparePrefixes(one.key, two.key));
+		for (let pair of pairs) {
+			chunks.push(Packet.encode(pair.key));
+			chunks.push(pair.value);
 		}
 		return utils.Chunk.concat(chunks);
 	}
