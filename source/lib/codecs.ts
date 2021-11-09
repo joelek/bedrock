@@ -240,7 +240,7 @@ export class StringCodec extends Codec<string> {
 		return parser.try((parser) => {
 			utils.IntegerAssert.exactly(parser.unsigned(1), Tag.STRING);
 			// @ts-ignore
-			let value = new TextDecoder().decode(parser.chunk()).normalize();
+			let value = new TextDecoder().decode(parser.chunk());
 			return value;
 		});
 	}
@@ -252,7 +252,7 @@ export class StringCodec extends Codec<string> {
 		let chunks = [] as Array<Uint8Array>;
 		chunks.push(Uint8Array.of(Tag.STRING));
 		// @ts-ignore
-		chunks.push(new TextEncoder().encode(subject.normalize()));
+		chunks.push(new TextEncoder().encode(subject));
 		return utils.Chunk.concat(chunks);
 	}
 };
