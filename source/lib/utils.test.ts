@@ -183,6 +183,24 @@ function test(name: string, cb: () => Promise<any>): void {
 		let expected = 127;
 		console.assert(observed === expected);
 	});
+
+	test(`It should maintain VarCategory sort order.`, async () => {
+		let buffers = new Array<Uint8Array>();
+		for (let i = 0; i < 1000; i++) {
+			let number = -505 + Math.floor(1010 * Math.random());
+			let buffer = utils.VarCategory.encode(number);
+			buffers.push(buffer);
+		}
+		buffers.sort(utils.Chunk.comparePrefixes);
+		let last: number | undefined;
+		for (let i = 0; i < buffers.length; i++) {
+			let number = utils.VarCategory.decode(buffers[i]);
+			if (last != null) {
+				console.assert(last <= number);
+			}
+			last = number;
+		}
+	});
 })();
 
 (async () => {
