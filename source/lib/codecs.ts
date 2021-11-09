@@ -1,5 +1,25 @@
 import * as utils from "./utils";
 
+class Packet {
+	private constructor() {}
+
+	static decode(parser: utils.Parser | Uint8Array): Uint8Array {
+		parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
+		return parser.try((parser) => {
+			let length = utils.VarLength.decode(parser);
+			let payload = parser.chunk(length);
+			return payload;
+		});
+	}
+
+	static encode(payload: Uint8Array): Uint8Array {
+		return utils.Chunk.concat([
+			utils.VarLength.encode(payload.length),
+			payload
+		]);
+	}
+};
+
 export type CodecTuple<V extends any[]> = {
 	[K in keyof V]: V[K] extends V[number] ? Codec<V[K]> : never;
 };
@@ -28,20 +48,13 @@ export abstract class Codec<V extends any> {
 	abstract encodePayload(subject: V): Uint8Array;
 
 	decode(parser: utils.Parser | Uint8Array): V {
-		parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
-		return parser.try((parser) => {
-			let length = utils.VarLength.decode(parser);
-			let payload = parser.chunk(length);
-			return this.decodePayload(payload);
-		});
+		let payload = Packet.decode(parser);
+		return this.decodePayload(payload);
 	}
 
 	encode(subject: V): Uint8Array {
 		let payload = this.encodePayload(subject);
-		return utils.Chunk.concat([
-			utils.VarLength.encode(payload.length),
-			payload
-		]);
+		return Packet.encode(payload);
 	}
 };
 
