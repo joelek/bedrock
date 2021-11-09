@@ -364,12 +364,12 @@ function test(name: string, cb: () => Promise<any>): void {
 
 	test(`It should encode VarLength 16383 properly.`, async () => {
 		let observed = utils.VarLength.encode(16383);
-		let expected = Uint8Array.of(0b1_11111111, 0b0_1111111);
+		let expected = Uint8Array.of(0b1_1111111, 0b0_1111111);
 		console.assert(utils.Chunk.equals(observed, expected));
 	});
 
 	test(`It should decode VarLength 16383 properly.`, async () => {
-		let observed = utils.VarLength.decode(Uint8Array.of(0b1_11111111, 0b0_1111111));
+		let observed = utils.VarLength.decode(Uint8Array.of(0b1_1111111, 0b0_1111111));
 		let expected = 16383;
 		console.assert(observed === expected);
 	});
