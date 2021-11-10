@@ -26,25 +26,25 @@ Every serialization format comes with a unique set of features and is often desi
 | ------------------ | ---------- | ------------- | ------------- | ---------- | ------------- | ------------- |
 | **Type system**    | Fixed      | :sweat_smile: | Extensible    | Extensible | Extensible    | Extensible    |
 | **Encoding rules** | Flexible   | Flexible      | Distinguished | Flexible   | Flexible      | Distinguished |
-| **Overhead**       | Medium     | High          | Low           | Medium     | Low           | Medium        |
+| **Overhead**       | Medium     | High          | Low           | Low        | Low           | Medium        |
 | **Complexity**     | Low        | Low           | High          | High       | High          | High          |
 | **Segmentation**   | Delimiters | Delimiters    | Prefix        | Prefix     | Prefix        | Prefix        |
 | **Schema**         | Optional   | Optional      | Optional      | Optional   | Required      | Optional      |
-| **Sort-awareness** | No         | No            | No            | No         | No            | Yes           |
+| **Sort-aware**     | No         | No            | No            | No         | No            | Yes           |
 
 * An extensible type system is needed to ensure that a specification can evolve while ensuring backwards comaptibility. Serialization formats with extensible type systems will be able to adapt as needs and requirements change.
 
-* A serialization format with distinguished encoding rules specify every detail of the format so that there exists only one unique representation of the encoded data. Distinguished encoding rules are required for cryptographic applications.
+* A serialization format with distinguished encoding rules specify every detail of the format so that there exists only one unique valid representation of the encoded data. Distinguished encoding rules are required for cryptographic applications.
 
-* All serialization formats contain some amount of overhead. The overhead needs to be balanced against the features provided by the serialization format but should generally be kept to a minimum.
+* All serialization formats contain some amount of overhead. The overhead needs to be balanced against the features provided by the format but should generally be kept to a minimum.
 
 * Different serialization formats have different complexity. Low complexity is generally favourable as low-complexity formats will gain adoption more easily. High-complexity formats will generally include more advanced features.
 
 * Human-readable formats tend to use delimiters for segmentation. This is disirable as edits can be made without causing cascading changes to the serialized data. Unfortunately, it is terrible from a computing standpoint as unknown amounts of data must be parsed in order to extract subsets of the data. Advanced formats tend to use length prefixes instead of delimiters as it allows data to be handled more efficiently.
 
-* Schemas may be used to augument data for some serialization formats while others outright require them for parsing to be possible. Formats that require schemas can reduce their overhead significantly at the cost of lowering the robustness of the format.
+* Schemas may be used to augument data for some serialization formats while others outright require them for parsing to be possible. Formats that require schemas can reduce their overhead significantly at the cost of lowering the robustness of the data stored.
 
-* Most serialization formats do not feature sort-aware serialization. Sort-aware serialization ensures that serialized data can be sorted by a generalized sorting algorithm unaware of the types of the underlying data. This is critical in database applications.
+* Most serialization formats do not feature sort-aware serialization. Sort-aware serialization ensures that serialized data can be sorted by a generalized sorting algorithm, unaware of the type of the underlying data. This is useful for database applications.
 
 Bedrock is a general-use serialization format with traits favoured by specialized applications.
 
@@ -150,7 +150,7 @@ Bedrock defines a simple packetization format that is used to define boundaries 
 
 Bedrock defines the following types where each type is identified through a tag corresponding to the given type. The packet of a payload always begins with the tag which is encoded as a single unsigned integer. Types may encode additional payload data as detailed below.
 
-Please note that all examples display payload data and not packetized data. Packetized data would be prefixed by the byte length of the payload encoded using the `VarLength` rule.
+Please note that all examples display payload data and not packetized data. Packetized data would be prefixed by the byte length of the payload encoded using the `VarLength` encoding rule.
 
 ### Null
 
@@ -257,7 +257,9 @@ The additional payload data consists of zero or more packets concatenated withou
 
 The Map type is used to represent associative data. Map types are encoded using the tag `08` and encode additional payload data.
 
-The additional payload data consists of alternating key and value packets concatenated without the use of padding. Key packets are always encoded as strings but values may be encoded using any type. The packet pairs are stored in the order determined by the sort-order of the payload data of the keys.
+The additional payload data consists of alternating key and value packets concatenated without the use of padding. Key packets are always encoded as strings but values may be encoded using any type.
+
+The packet pairs are stored in the order determined by the sort-order of the payload data of the keys. This results in a distinguished encoding with exactly one unique representation making it suitable for cryptographic purposes.
 
 <pre>
 08 05 04 6E 61 6D 65 05 04 6A 6F 65 6C
