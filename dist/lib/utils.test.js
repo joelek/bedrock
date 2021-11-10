@@ -8,6 +8,56 @@ function test(name, cb) {
     });
 }
 (async () => {
+    test(`It should convert chunks to strings "binary" properly.`, async () => {
+        let observed = utils.Chunk.toString(Uint8Array.of(0x00, 0x0F, 0xF0, 0xFF), "binary");
+        let expected = "\x00\x0F\xF0\xFF";
+        console.assert(observed === expected);
+    });
+    test(`It should convert strings to chunks "binary" properly.`, async () => {
+        let observed = utils.Chunk.fromString("\x00\x0F\xF0\xFF", "binary");
+        let expected = Uint8Array.of(0x00, 0x0F, 0xF0, 0xFF);
+        console.assert(utils.Chunk.equals(observed, expected));
+    });
+    test(`It should convert chunks to strings "base64" properly.`, async () => {
+        let observed = utils.Chunk.toString(Uint8Array.of(0x00, 0x0F, 0xF0, 0xFF), "base64");
+        let expected = "AA/w/w==";
+        console.assert(observed === expected);
+    });
+    test(`It should convert strings to chunks "base64" properly.`, async () => {
+        let observed = utils.Chunk.fromString("AA/w/w==", "base64");
+        let expected = Uint8Array.of(0x00, 0x0F, 0xF0, 0xFF);
+        console.assert(utils.Chunk.equals(observed, expected));
+    });
+    test(`It should convert chunks to strings "base64url" properly.`, async () => {
+        let observed = utils.Chunk.toString(Uint8Array.of(0x00, 0x0F, 0xF0, 0xFF), "base64url");
+        let expected = "AA_w_w";
+        console.assert(observed === expected);
+    });
+    test(`It should convert strings to chunks "base64url" properly.`, async () => {
+        let observed = utils.Chunk.fromString("AA_w_w", "base64url");
+        let expected = Uint8Array.of(0x00, 0x0F, 0xF0, 0xFF);
+        console.assert(utils.Chunk.equals(observed, expected));
+    });
+    test(`It should convert chunks to strings "hex" properly.`, async () => {
+        let observed = utils.Chunk.toString(Uint8Array.of(0x00, 0x0F, 0xF0, 0xFF), "hex");
+        let expected = "000FF0FF";
+        console.assert(observed === expected);
+    });
+    test(`It should convert strings to chunks "hex" properly.`, async () => {
+        let observed = utils.Chunk.fromString("000FF0FF", "hex");
+        let expected = Uint8Array.of(0x00, 0x0F, 0xF0, 0xFF);
+        console.assert(utils.Chunk.equals(observed, expected));
+    });
+    test(`It should convert chunks to strings "utf-8" properly.`, async () => {
+        let observed = utils.Chunk.toString(Uint8Array.of(0xF0, 0x9F, 0x9A, 0x80), "utf-8");
+        let expected = "\u{1F680}";
+        console.assert(observed === expected);
+    });
+    test(`It should convert strings to chunks "utf-8" properly.`, async () => {
+        let observed = utils.Chunk.fromString("\u{1F680}", "utf-8");
+        let expected = Uint8Array.of(0xF0, 0x9F, 0x9A, 0x80);
+        console.assert(utils.Chunk.equals(observed, expected));
+    });
     test(`It should determine equality for chunks [0], [0] properly.`, async () => {
         let observed = utils.Chunk.equals(Uint8Array.of(0), Uint8Array.of(0));
         let expected = true;

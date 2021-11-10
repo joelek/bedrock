@@ -1,4 +1,10 @@
 import * as utils from "./utils";
+declare type IntersectionOf<A> = (A extends any ? (_: A) => void : never) extends ((_: infer B) => void) ? B : never;
+export declare class Packet {
+    private constructor();
+    static decode(parser: utils.Parser | Uint8Array): Uint8Array;
+    static encode(payload: Uint8Array): Uint8Array;
+}
 export declare type CodecTuple<V extends any[]> = {
     [K in keyof V]: V[K] extends V[number] ? Codec<V[K]> : never;
 };
@@ -127,11 +133,11 @@ export declare class TupleCodec<V extends any[]> extends Codec<[...V, ...any[]]>
 export declare const Tuple: {
     of<V extends any[]>(...codecs: CodecTuple<V>): TupleCodec<V>;
 };
-export declare class ObjectCodec<V extends Record<string, any>> extends Codec<V & Record<string, any>> {
+export declare class ObjectCodec<V extends Record<string, any>> extends Codec<Record<string, any> & V> {
     private codecs;
     constructor(codecs: CodecRecord<V>);
-    decodePayload(parser: utils.Parser | Uint8Array): V & Record<string, any>;
-    encodePayload(subject: V & Record<string, any>): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array): Record<string, any> & V;
+    encodePayload(subject: Record<string, any> & V): Uint8Array;
 }
 export declare const Object: {
     of<V extends Record<string, any>>(codecs: CodecRecord<V>): ObjectCodec<V>;
@@ -145,3 +151,13 @@ export declare class UnionCodec<V extends any[]> extends Codec<V[number]> {
 export declare const Union: {
     of<V extends any[]>(...codecs: CodecTuple<V>): UnionCodec<V>;
 };
+export declare class IntersectionCodec<V extends any[]> extends Codec<IntersectionOf<V[number]>> {
+    private codecs;
+    constructor(...codecs: CodecRecord<[...V]>);
+    decodePayload(parser: utils.Parser | Uint8Array): IntersectionOf<V[number]>;
+    encodePayload(subject: IntersectionOf<V[number]>): Uint8Array;
+}
+export declare const Intersection: {
+    of<V extends any[]>(...codecs: CodecRecord<V>): IntersectionCodec<V>;
+};
+export {};

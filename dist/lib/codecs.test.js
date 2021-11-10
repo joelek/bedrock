@@ -641,3 +641,79 @@ function recordEquals(one, two) {
         console.assert(observed === expected);
     });
 })();
+(() => {
+    test(`It should encode {} as intersection<{}> properly.`, async () => {
+        let codec = codecs.Intersection.of(codecs.Object.of({}));
+        let observed = codec.encode({});
+        let expected = Uint8Array.of(0x01, 0x08);
+        console.assert(utils.Chunk.equals(observed, expected));
+    });
+    test(`It should decode {} as intersection<{}> properly.`, async () => {
+        let codec = codecs.Intersection.of(codecs.Object.of({}));
+        let observed = codec.decode(Uint8Array.of(0x01, 0x08));
+        let expected = {};
+        console.assert(recordEquals(observed, expected));
+    });
+    test(`It should encode { key1: "a" } as intersection<{}> properly.`, async () => {
+        let codec = codecs.Intersection.of(codecs.Object.of({}));
+        let observed = codec.encode({
+            key1: "a"
+        });
+        let expected = Uint8Array.of(0x0A, 0x08, 0x05, 0x04, 0x6B, 0x65, 0x79, 0x31, 0x02, 0x04, 0x61);
+        console.assert(utils.Chunk.equals(observed, expected));
+    });
+    test(`It should decode { key1: "a" } as intersection<{}> properly.`, async () => {
+        let codec = codecs.Intersection.of(codecs.Object.of({}));
+        let observed = codec.decode(Uint8Array.of(0x0A, 0x08, 0x05, 0x04, 0x6B, 0x65, 0x79, 0x31, 0x02, 0x04, 0x61));
+        let expected = {
+            key1: "a"
+        };
+        console.assert(recordEquals(observed, expected));
+    });
+    test(`It should encode { key1: "a" } as intersection<{ key1: string }, {}> properly.`, async () => {
+        let codec = codecs.Intersection.of(codecs.Object.of({
+            key1: codecs.String
+        }), codecs.Object.of({}));
+        let observed = codec.encode({
+            key1: "a"
+        });
+        let expected = Uint8Array.of(0x0A, 0x08, 0x05, 0x04, 0x6B, 0x65, 0x79, 0x31, 0x02, 0x04, 0x61);
+        console.assert(utils.Chunk.equals(observed, expected));
+    });
+    test(`It should decode { key1: "a" } as intersection<{ key1: string }, {}> properly.`, async () => {
+        let codec = codecs.Intersection.of(codecs.Object.of({
+            key1: codecs.String
+        }), codecs.Object.of({}));
+        let observed = codec.decode(Uint8Array.of(0x0A, 0x08, 0x05, 0x04, 0x6B, 0x65, 0x79, 0x31, 0x02, 0x04, 0x61));
+        let expected = {
+            key1: "a"
+        };
+        console.assert(recordEquals(observed, expected));
+    });
+    test(`It should encode { key1: "a", key2: "b" } as intersection<{ key1: string }, { key2: string }> properly.`, async () => {
+        let codec = codecs.Intersection.of(codecs.Object.of({
+            key1: codecs.String
+        }), codecs.Object.of({
+            key2: codecs.String
+        }));
+        let observed = codec.encode({
+            key1: "a",
+            key2: "b"
+        });
+        let expected = Uint8Array.of(0x13, 0x08, 0x05, 0x04, 0x6B, 0x65, 0x79, 0x31, 0x02, 0x04, 0x61, 0x05, 0x04, 0x6B, 0x65, 0x79, 0x32, 0x02, 0x04, 0x62);
+        console.assert(utils.Chunk.equals(observed, expected));
+    });
+    test(`It should decode { key1: "a", key2: "b" } as intersection<{ key1: string }, { key2: string }> properly.`, async () => {
+        let codec = codecs.Intersection.of(codecs.Object.of({
+            key1: codecs.String
+        }), codecs.Object.of({
+            key2: codecs.String
+        }));
+        let observed = codec.decode(Uint8Array.of(0x13, 0x08, 0x05, 0x04, 0x6B, 0x65, 0x79, 0x31, 0x02, 0x04, 0x61, 0x05, 0x04, 0x6B, 0x65, 0x79, 0x32, 0x02, 0x04, 0x62));
+        let expected = {
+            key1: "a",
+            key2: "b"
+        };
+        console.assert(recordEquals(observed, expected));
+    });
+})();

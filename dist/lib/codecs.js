@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Union = exports.UnionCodec = exports.Object = exports.ObjectCodec = exports.Tuple = exports.TupleCodec = exports.Record = exports.RecordCodec = exports.Array = exports.ArrayCodec = exports.Boolean = exports.BooleanCodec = exports.Unknown = exports.UnknownCodec = exports.UnknownValue = exports.Map = exports.MapCodec = exports.List = exports.ListCodec = exports.BigInt = exports.BigIntCodec = exports.Binary = exports.BinaryCodec = exports.String = exports.StringCodec = exports.Number = exports.NumberCodec = exports.True = exports.TrueCodec = exports.False = exports.FalseCodec = exports.Null = exports.NullCodec = exports.Any = exports.AnyCodec = exports.Codec = exports.Tag = void 0;
+exports.Intersection = exports.IntersectionCodec = exports.Union = exports.UnionCodec = exports.Object = exports.ObjectCodec = exports.Tuple = exports.TupleCodec = exports.Record = exports.RecordCodec = exports.Array = exports.ArrayCodec = exports.Boolean = exports.BooleanCodec = exports.Unknown = exports.UnknownCodec = exports.UnknownValue = exports.Map = exports.MapCodec = exports.List = exports.ListCodec = exports.BigInt = exports.BigIntCodec = exports.Binary = exports.BinaryCodec = exports.String = exports.StringCodec = exports.Number = exports.NumberCodec = exports.True = exports.TrueCodec = exports.False = exports.FalseCodec = exports.Null = exports.NullCodec = exports.Any = exports.AnyCodec = exports.Codec = exports.Tag = exports.Packet = void 0;
 const utils = require("./utils");
 class Packet {
     constructor() { }
@@ -19,6 +19,7 @@ class Packet {
         ]);
     }
 }
+exports.Packet = Packet;
 ;
 var Tag;
 (function (Tag) {
@@ -241,8 +242,7 @@ class StringCodec extends Codec {
         parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
         return parser.try((parser) => {
             utils.IntegerAssert.exactly(parser.unsigned(1), Tag.STRING);
-            // @ts-ignore
-            let value = new TextDecoder().decode(parser.chunk());
+            let value = utils.Chunk.toString(parser.chunk(), "utf-8");
             return value;
         });
     }
@@ -252,8 +252,7 @@ class StringCodec extends Codec {
         }
         let chunks = [];
         chunks.push(Uint8Array.of(Tag.STRING));
-        // @ts-ignore
-        chunks.push(new TextEncoder().encode(subject));
+        chunks.push(utils.Chunk.fromString(subject, "utf-8"));
         return utils.Chunk.concat(chunks);
     }
 }
@@ -673,5 +672,31 @@ exports.UnionCodec = UnionCodec;
 exports.Union = {
     of(...codecs) {
         return new UnionCodec(...codecs);
+    }
+};
+class IntersectionCodec extends Codec {
+    codecs;
+    constructor(...codecs) {
+        super();
+        this.codecs = codecs;
+    }
+    decodePayload(parser) {
+        for (let codec of this.codecs) {
+            codec.decodePayload(parser);
+        }
+        return exports.Any.decodePayload(parser);
+    }
+    encodePayload(subject) {
+        for (let codec of this.codecs) {
+            codec.encodePayload(subject);
+        }
+        return exports.Any.encodePayload(subject);
+    }
+}
+exports.IntersectionCodec = IntersectionCodec;
+;
+exports.Intersection = {
+    of(...codecs) {
+        return new IntersectionCodec(...codecs);
     }
 };
