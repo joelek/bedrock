@@ -1,6 +1,6 @@
 import * as utils from "./utils";
 
-class Packet {
+export class Packet {
 	private constructor() {}
 
 	static decode(parser: utils.Parser | Uint8Array): Uint8Array {
