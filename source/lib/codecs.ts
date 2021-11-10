@@ -623,7 +623,7 @@ export const Tuple = {
 	}
 };
 
-export class ObjectCodec<V extends Record<string, any>> extends Codec<V & Record<string, any>> {
+export class ObjectCodec<V extends Record<string, any>> extends Codec<Record<string, any> & V> {
 	private codecs: CodecRecord<V>;
 
 	constructor(codecs: CodecRecord<V>) {
@@ -631,7 +631,7 @@ export class ObjectCodec<V extends Record<string, any>> extends Codec<V & Record
 		this.codecs = codecs;
 	}
 
-	decodePayload(parser: utils.Parser | Uint8Array): V & Record<string, any> {
+	decodePayload(parser: utils.Parser | Uint8Array): Record<string, any> & V {
 		parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
 		return parser.try((parser) => {
 			let keys = new Set(globalThis.Object.keys(this.codecs));
@@ -646,11 +646,11 @@ export class ObjectCodec<V extends Record<string, any>> extends Codec<V & Record
 			if (keys.size !== 0) {
 				throw `Expected members ${globalThis.Array.from(keys)} to be decoded!`;
 			}
-			return subject as V & Record<string, any>;
+			return subject as Record<string, any> & V;
 		});
 	}
 
-	encodePayload(subject: V & Record<string, any>): Uint8Array {
+	encodePayload(subject: Record<string, any> & V): Uint8Array {
 		let keys = new Set(globalThis.Object.keys(this.codecs));
 		let payload = Map.encodePayload(subject, (key, subject) => {
 			keys.delete(key);
