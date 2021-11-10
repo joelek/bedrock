@@ -1,5 +1,7 @@
 import * as utils from "./utils";
 
+type IntersectionOf<A> = (A extends any ? (_: A) => void : never) extends ((_: infer B) => void) ? B : never;
+
 export class Packet {
 	private constructor() {}
 
@@ -703,5 +705,34 @@ export class UnionCodec<V extends any[]> extends Codec<V[number]> {
 export const Union = {
 	of<V extends any[]>(...codecs: CodecTuple<V>): UnionCodec<V> {
 		return new UnionCodec(...codecs);
+	}
+};
+
+export class IntersectionCodec<V extends any[]> extends Codec<IntersectionOf<V[number]>> {
+	private codecs: CodecRecord<[...V]>;
+
+	constructor(...codecs: CodecRecord<[...V]>) {
+		super();
+		this.codecs = codecs;
+	}
+
+	decodePayload(parser: utils.Parser | Uint8Array): IntersectionOf<V[number]> {
+		for (let codec of this.codecs) {
+			codec.decodePayload(parser);
+		}
+		return Any.decodePayload(parser);
+	}
+
+	encodePayload(subject: IntersectionOf<V[number]>): Uint8Array {
+		for (let codec of this.codecs) {
+			codec.encodePayload(subject);
+		}
+		return Any.encodePayload(subject);
+	}
+};
+
+export const Intersection = {
+	of<V extends any[]>(...codecs: CodecRecord<V>): IntersectionCodec<V> {
+		return new IntersectionCodec(...codecs);
 	}
 };

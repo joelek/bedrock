@@ -301,6 +301,5 @@ NB: This project targets TypeScript 4 in strict mode.
 
 ## Roadmap
 
-* Investigate whether intersection codecs are possible or not.
 * Move common functionality to stdlib.
 * Investigate whether number can be generalized.
