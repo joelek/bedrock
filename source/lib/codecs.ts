@@ -254,8 +254,7 @@ export class StringCodec extends Codec<string> {
 		parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
 		return parser.try((parser) => {
 			utils.IntegerAssert.exactly(parser.unsigned(1), Tag.STRING);
-			// @ts-ignore
-			let value = new TextDecoder().decode(parser.chunk());
+			let value = utils.Chunk.toString(parser.chunk(), "utf-8");
 			return value;
 		});
 	}
@@ -266,8 +265,7 @@ export class StringCodec extends Codec<string> {
 		}
 		let chunks = [] as Array<Uint8Array>;
 		chunks.push(Uint8Array.of(Tag.STRING));
-		// @ts-ignore
-		chunks.push(new TextEncoder().encode(subject));
+		chunks.push(utils.Chunk.fromString(subject, "utf-8"));
 		return utils.Chunk.concat(chunks);
 	}
 };
