@@ -124,16 +124,62 @@ export class IntegerAssert {
 export class Chunk {
 	private constructor() {}
 
-	static fromHex(string: string): Uint8Array {
-		if (string.length % 2 === 1) {
-			string = `0${string}`;
+	static fromString(string: string, encoding: "base64" | "base64url" | "binary" | "hex" | "utf-8"): Uint8Array {
+		if (encoding === "binary") {
+			let bytes = new Array<number>();
+			for (let i = 0; i < string.length; i += 1) {
+				let byte = string.charCodeAt(i);
+				bytes.push(byte);
+			}
+			return Uint8Array.from(bytes);
 		}
-		let bytes = new Array<number>();
-		for (let i = 0; i < string.length; i += 2) {
-			let byte = Number.parseInt(string.slice(i, i + 2), 16);
-			bytes.push(byte);
+		if (encoding === "base64") {
+			return Chunk.fromString(atob(string), "binary");
 		}
-		return Uint8Array.from(bytes);
+		if (encoding === "base64url") {
+			return Chunk.fromString(string.replaceAll("-", "+").replaceAll("_", "/"), "base64");
+		}
+		if (encoding === "hex") {
+			if (string.length % 2 === 1) {
+				string = `0${string}`;
+			}
+			let bytes = new Array<number>();
+			for (let i = 0; i < string.length; i += 2) {
+				let part = string.slice(i, i + 2);
+				let byte = Number.parseInt(part, 16);
+				bytes.push(byte);
+			}
+			return Uint8Array.from(bytes);
+		}
+		// @ts-ignore
+		return new TextEncoder().encode(string);
+	}
+
+	static toString(chunk: Uint8Array, encoding: "base64" | "base64url" | "binary" | "hex" | "utf-8"): string {
+		if (encoding === "binary") {
+			let parts = new Array<string>();
+			for (let byte of chunk) {
+				let part = String.fromCharCode(byte);
+				parts.push(part);
+			}
+			return parts.join("");
+		}
+		if (encoding === "base64") {
+			return btoa(Chunk.toString(chunk, "binary"));
+		}
+		if (encoding === "base64url") {
+			return Chunk.toString(chunk, "base64").replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
+		}
+		if (encoding === "hex") {
+			let parts = new Array<string>();
+			for (let byte of chunk) {
+				let part = byte.toString(16).toUpperCase().padStart(2, "0");
+				parts.push(part);
+			}
+			return parts.join("");
+		}
+		// @ts-ignore
+		return new TextDecoder().decode(chunk);
 	}
 
 	static equals(one: Uint8Array, two: Uint8Array): boolean {
