@@ -9,55 +9,55 @@ function test(name: string, cb: () => Promise<any>): void {
 
 (async () => {
 	test(`It should determine equality for chunks [0], [0] properly.`, async () => {
-		let observed = utils.Chunk.equals(Uint8Array.of(0), Uint8Array.of(0))
+		let observed = utils.Chunk.equals(Uint8Array.of(0), Uint8Array.of(0));
 		let expected = true;
 		console.assert(observed === expected);
 	});
 
 	test(`It should determine equality for chunks [0], [1] properly.`, async () => {
-		let observed = utils.Chunk.equals(Uint8Array.of(0), Uint8Array.of(1))
+		let observed = utils.Chunk.equals(Uint8Array.of(0), Uint8Array.of(1));
 		let expected = false;
 		console.assert(observed === expected);
 	});
 
 	test(`It should compare chunks [0], [0] properly.`, async () => {
-		let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0), Uint8Array.of(0))
+		let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0), Uint8Array.of(0));
 		let expected = 0;
 		console.assert(observed === expected);
 	});
 
 	test(`It should compare chunks [0], [1] properly.`, async () => {
-		let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0), Uint8Array.of(1))
+		let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0), Uint8Array.of(1));
 		let expected = -1;
 		console.assert(observed === expected);
 	});
 
 	test(`It should compare chunks [1], [0] properly.`, async () => {
-		let observed = utils.Chunk.comparePrefixes(Uint8Array.of(1), Uint8Array.of(0))
+		let observed = utils.Chunk.comparePrefixes(Uint8Array.of(1), Uint8Array.of(0));
 		let expected = 1;
 		console.assert(observed === expected);
 	});
 
 	test(`It should compare chunks [0, 0], [0] properly.`, async () => {
-		let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 0), Uint8Array.of(0))
+		let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 0), Uint8Array.of(0));
 		let expected = 1;
 		console.assert(observed === expected);
 	});
 
 	test(`It should compare chunks [0, 1], [0] properly.`, async () => {
-		let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 1), Uint8Array.of(0))
+		let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 1), Uint8Array.of(0));
 		let expected = 1;
 		console.assert(observed === expected);
 	});
 
 	test(`It should compare chunks [0, 1], [1] properly.`, async () => {
-		let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 1), Uint8Array.of(1))
+		let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 1), Uint8Array.of(1));
 		let expected = -1;
 		console.assert(observed === expected);
 	});
 
 	test(`It should concat chunks properly.`, async () => {
-		let observed = utils.Chunk.concat([Uint8Array.of(1, 2), Uint8Array.of(3)])
+		let observed = utils.Chunk.concat([Uint8Array.of(1, 2), Uint8Array.of(3)]);
 		let expected = Uint8Array.of(1, 2, 3);
 		console.assert(utils.Chunk.equals(observed, expected));
 	});
