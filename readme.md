@@ -6,12 +6,12 @@ Sort-aware and extensible serialization format with distinguished encoding rules
 08 04 04 6B 65 79 06 04 76 61 6C 75 65
 
 08 (map tag)
-	04 (packet, 0x04 byte payload)
-		04 (string tag)
-		6B 65 79 ("key")
-	06 (packet, 0x06 byte payload)
-		04 (string tag)
-		76 61 6C 75 65 ("value")
+   04 (packet, 0x04 byte payload)
+      04 (string tag)
+      6B 65 79 ("key")
+   06 (packet, 0x06 byte payload)
+      04 (string tag)
+      76 61 6C 75 65 ("value")
 
 { "key": "value" }
 </pre>
@@ -288,7 +288,7 @@ Thank you for your support!
 Releases follow semantic versioning and release packages are published using the GitHub platform. Use the following command to install the latest release.
 
 ```
-npm install joelek/bedrock#semver:^0.1
+npm install joelek/bedrock#semver:^0.2
 ```
 
 Use the following command to install the very latest build. The very latest build may include breaking changes and should not be used in production environments.
