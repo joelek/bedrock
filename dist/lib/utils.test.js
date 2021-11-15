@@ -8,6 +8,80 @@ function test(name, cb) {
     });
 }
 (async () => {
+    test(`It should parse unsigned 1-byte big endian properly.`, async () => {
+        let parser = new utils.Parser(Uint8Array.of(1, 2, 3, 4, 5, 6));
+        let observed = parser.unsigned(1, "big");
+        let expected = 0x01;
+        console.assert(observed === expected);
+    });
+    test(`It should parse unsigned 2-byte big endian properly.`, async () => {
+        let parser = new utils.Parser(Uint8Array.of(1, 2, 3, 4, 5, 6));
+        let observed = parser.unsigned(2, "big");
+        let expected = 0x0102;
+        console.assert(observed === expected);
+    });
+    test(`It should parse unsigned 3-byte big endian properly.`, async () => {
+        let parser = new utils.Parser(Uint8Array.of(1, 2, 3, 4, 5, 6));
+        let observed = parser.unsigned(3, "big");
+        let expected = 0x010203;
+        console.assert(observed === expected);
+    });
+    test(`It should parse unsigned 4-byte big endian properly.`, async () => {
+        let parser = new utils.Parser(Uint8Array.of(1, 2, 3, 4, 5, 6));
+        let observed = parser.unsigned(4, "big");
+        let expected = 0x01020304;
+        console.assert(observed === expected);
+    });
+    test(`It should parse unsigned 5-byte big endian properly.`, async () => {
+        let parser = new utils.Parser(Uint8Array.of(1, 2, 3, 4, 5, 6));
+        let observed = parser.unsigned(5, "big");
+        let expected = 0x0102030405;
+        console.assert(observed === expected);
+    });
+    test(`It should parse unsigned 6-byte big endian properly.`, async () => {
+        let parser = new utils.Parser(Uint8Array.of(1, 2, 3, 4, 5, 6));
+        let observed = parser.unsigned(6, "big");
+        let expected = 0x010203040506;
+        console.assert(observed === expected);
+    });
+    test(`It should parse unsigned 1-byte little endian properly.`, async () => {
+        let parser = new utils.Parser(Uint8Array.of(1, 2, 3, 4, 5, 6));
+        let observed = parser.unsigned(1, "little");
+        let expected = 0x01;
+        console.assert(observed === expected);
+    });
+    test(`It should parse unsigned 2-byte little endian properly.`, async () => {
+        let parser = new utils.Parser(Uint8Array.of(1, 2, 3, 4, 5, 6));
+        let observed = parser.unsigned(2, "little");
+        let expected = 0x0201;
+        console.assert(observed === expected);
+    });
+    test(`It should parse unsigned 3-byte little endian properly.`, async () => {
+        let parser = new utils.Parser(Uint8Array.of(1, 2, 3, 4, 5, 6));
+        let observed = parser.unsigned(3, "little");
+        let expected = 0x030201;
+        console.assert(observed === expected);
+    });
+    test(`It should parse unsigned 4-byte little endian properly.`, async () => {
+        let parser = new utils.Parser(Uint8Array.of(1, 2, 3, 4, 5, 6));
+        let observed = parser.unsigned(4, "little");
+        let expected = 0x04030201;
+        console.assert(observed === expected);
+    });
+    test(`It should parse unsigned 5-byte little endian properly.`, async () => {
+        let parser = new utils.Parser(Uint8Array.of(1, 2, 3, 4, 5, 6));
+        let observed = parser.unsigned(5, "little");
+        let expected = 0x0504030201;
+        console.assert(observed === expected);
+    });
+    test(`It should parse unsigned 6-byte little endian properly.`, async () => {
+        let parser = new utils.Parser(Uint8Array.of(1, 2, 3, 4, 5, 6));
+        let observed = parser.unsigned(6, "little");
+        let expected = 0x060504030201;
+        console.assert(observed === expected);
+    });
+})();
+(async () => {
     test(`It should convert chunks to strings "binary" properly.`, async () => {
         let observed = utils.Chunk.toString(Uint8Array.of(0x00, 0x0F, 0xF0, 0xFF), "binary");
         let expected = "\x00\x0F\xF0\xFF";
