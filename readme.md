@@ -8,10 +8,10 @@ Sort-aware and extensible serialization format with distinguished encoding rules
 08 (map tag)
    04 (packet, 0x04 byte payload)
       04 (string tag)
-      6B 65 79 ("key")
+          6B 65 79 ("key")
    06 (packet, 0x06 byte payload)
       04 (string tag)
-      76 61 6C 75 65 ("value")
+          76 61 6C 75 65 ("value")
 
 { "key": "value" }
 </pre>
