@@ -808,7 +808,8 @@ function recordEquals(one: Record<string, any>, two: Record<string, any>): boole
 		console.assert(recordEquals(observed, expected));
 	});
 
-	test(`It should encode { key1: "a", key2: "b" } as intersection<{ key1: string }, { key2: string }> properly.`, async () => {		let codec = codecs.Intersection.of(
+	test(`It should encode { key1: "a", key2: "b" } as intersection<{ key1: string }, { key2: string }> properly.`, async () => {
+		let codec = codecs.Intersection.of(
 			codecs.Object.of({
 				key1: codecs.String
 			}),
