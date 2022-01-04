@@ -124,20 +124,20 @@ export declare class RecordCodec<V extends any> extends Codec<Record<string, V>>
 export declare const Record: {
     of<V extends unknown>(codec: Codec<V>): RecordCodec<V>;
 };
-export declare class TupleCodec<V extends any[]> extends Codec<[...V, ...any[]]> {
+export declare class TupleCodec<V extends any[]> extends Codec<[...V]> {
     private codecs;
     constructor(...codecs: CodecTuple<[...V]>);
-    decodePayload(parser: utils.Parser | Uint8Array): [...V, ...any[]];
-    encodePayload(subject: [...V, ...any[]]): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array): [...V];
+    encodePayload(subject: [...V]): Uint8Array;
 }
 export declare const Tuple: {
     of<V extends any[]>(...codecs: CodecTuple<V>): TupleCodec<V>;
 };
-export declare class ObjectCodec<V extends Record<string, any>> extends Codec<Record<string, any> & V> {
+export declare class ObjectCodec<V extends Record<string, any>> extends Codec<V> {
     private codecs;
     constructor(codecs: CodecRecord<V>);
-    decodePayload(parser: utils.Parser | Uint8Array): Record<string, any> & V;
-    encodePayload(subject: Record<string, any> & V): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array): V;
+    encodePayload(subject: V): Uint8Array;
 }
 export declare const Object: {
     of<V extends Record<string, any>>(codecs: CodecRecord<V>): ObjectCodec<V>;
