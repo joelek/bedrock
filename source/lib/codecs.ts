@@ -573,7 +573,7 @@ export const Record = {
 	}
 };
 
-export class TupleCodec<V extends any[]> extends Codec<[...V, ...any[]]> {
+export class TupleCodec<V extends any[]> extends Codec<[...V]> {
 	private codecs: CodecTuple<[...V]>;
 
 	constructor(...codecs: CodecTuple<[...V]>) {
@@ -581,7 +581,7 @@ export class TupleCodec<V extends any[]> extends Codec<[...V, ...any[]]> {
 		this.codecs = codecs;
 	}
 
-	decodePayload(parser: utils.Parser | Uint8Array): [...V, ...any[]] {
+	decodePayload(parser: utils.Parser | Uint8Array): [...V] {
 		parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
 		return parser.try((parser) => {
 			let indices = new globalThis.Set(this.codecs.keys());
@@ -596,11 +596,11 @@ export class TupleCodec<V extends any[]> extends Codec<[...V, ...any[]]> {
 			if (indices.size !== 0) {
 				throw `Expected members ${globalThis.Array.from(indices)} to be decoded!`;
 			}
-			return subject as [...V, ...any[]];
+			return subject as [...V];
 		});
 	}
 
-	encodePayload(subject: [...V, ...any[]]): Uint8Array {
+	encodePayload(subject: [...V]): Uint8Array {
 		let indices = new globalThis.Set(this.codecs.keys());
 		let payload = List.encodePayload(subject, (index, subject) => {
 			indices.delete(index);
@@ -623,7 +623,7 @@ export const Tuple = {
 	}
 };
 
-export class ObjectCodec<V extends Record<string, any>> extends Codec<Record<string, any> & V> {
+export class ObjectCodec<V extends Record<string, any>> extends Codec<V> {
 	private codecs: CodecRecord<V>;
 
 	constructor(codecs: CodecRecord<V>) {
@@ -631,7 +631,7 @@ export class ObjectCodec<V extends Record<string, any>> extends Codec<Record<str
 		this.codecs = codecs;
 	}
 
-	decodePayload(parser: utils.Parser | Uint8Array): Record<string, any> & V {
+	decodePayload(parser: utils.Parser | Uint8Array): V {
 		parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
 		return parser.try((parser) => {
 			let keys = new Set(globalThis.Object.keys(this.codecs));
@@ -646,11 +646,11 @@ export class ObjectCodec<V extends Record<string, any>> extends Codec<Record<str
 			if (keys.size !== 0) {
 				throw `Expected members ${globalThis.Array.from(keys)} to be decoded!`;
 			}
-			return subject as Record<string, any> & V;
+			return subject as V;
 		});
 	}
 
-	encodePayload(subject: Record<string, any> & V): Uint8Array {
+	encodePayload(subject: V): Uint8Array {
 		let keys = new Set(globalThis.Object.keys(this.codecs));
 		let payload = Map.encodePayload(subject, (key, subject) => {
 			keys.delete(key);

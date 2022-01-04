@@ -572,7 +572,7 @@ function recordEquals(one: Record<string, any>, two: Record<string, any>): boole
 
 	test(`It should encode ["one", 0n, false] as tuple<string, bigint> properly.`, async () => {
 		let codec = codecs.Tuple.of(codecs.String, codecs.BigInt);
-		let observed = codec.encode(["one", 0n, false]);
+		let observed = codec.encode(["one", 0n, false] as any);
 		let expected = Uint8Array.of(0x0C, 0x07, 0x04, 0x04, 0x6F, 0x6E, 0x65, 0x03, 0x06, 0x80, 0x00, 0x01, 0x01);
 		console.assert(utils.Chunk.equals(observed, expected));
 	});
@@ -673,7 +673,7 @@ function recordEquals(one: Record<string, any>, two: Record<string, any>): boole
 		let observed = codec.encode({
 			key1: "a",
 			key2: "b"
-		});
+		} as any);
 		let expected = Uint8Array.of(0x13, 0x08, 0x05, 0x04, 0x6B, 0x65, 0x79, 0x31, 0x02, 0x04, 0x61, 0x05, 0x04, 0x6B, 0x65, 0x79, 0x32, 0x02, 0x04, 0x62);
 		console.assert(utils.Chunk.equals(observed, expected));
 	});
