@@ -202,6 +202,42 @@ function test(name: string, cb: () => Promise<any>): void {
 		console.assert(observed === expected);
 	});
 
+	test(`It should compare chunks "bb" > "a" properly.`, async () => {
+		let observed = utils.Chunk.comparePrefixes(utils.Chunk.fromString("bb", "binary"), utils.Chunk.fromString("a", "binary"));
+		let expected = 1;
+		console.assert(observed === expected);
+	});
+
+	test(`It should compare chunks "bb" < "c" properly.`, async () => {
+		let observed = utils.Chunk.comparePrefixes(utils.Chunk.fromString("bb", "binary"), utils.Chunk.fromString("c", "binary"));
+		let expected = -1;
+		console.assert(observed === expected);
+	});
+
+	test(`It should compare chunks "a" < "bb" properly.`, async () => {
+		let observed = utils.Chunk.comparePrefixes(utils.Chunk.fromString("a", "binary"), utils.Chunk.fromString("bb", "binary"));
+		let expected = -1;
+		console.assert(observed === expected);
+	});
+
+	test(`It should compare chunks "c" > "bb" properly.`, async () => {
+		let observed = utils.Chunk.comparePrefixes(utils.Chunk.fromString("c", "binary"), utils.Chunk.fromString("bb", "binary"));
+		let expected = 1;
+		console.assert(observed === expected);
+	});
+
+	test(`It should compare chunks "ba" < "bb" properly.`, async () => {
+		let observed = utils.Chunk.comparePrefixes(utils.Chunk.fromString("ba", "binary"), utils.Chunk.fromString("bb", "binary"));
+		let expected = -1;
+		console.assert(observed === expected);
+	});
+
+	test(`It should compare chunks "bc" > "bb" properly.`, async () => {
+		let observed = utils.Chunk.comparePrefixes(utils.Chunk.fromString("bc", "binary"), utils.Chunk.fromString("bb", "binary"));
+		let expected = 1;
+		console.assert(observed === expected);
+	});
+
 	test(`It should concat chunks properly.`, async () => {
 		let observed = utils.Chunk.concat([Uint8Array.of(1, 2), Uint8Array.of(3)]);
 		let expected = Uint8Array.of(1, 2, 3);
