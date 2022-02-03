@@ -309,3 +309,4 @@ NB: This project targets TypeScript 4 in strict mode.
 
 * Move common functionality to stdlib.
 * Implement IntegerCodec as a wrapper for NumberCodec.
+* Decide whether RecordCodec should code Record<string, V> or Record<string, V | undefined>.
