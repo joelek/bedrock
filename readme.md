@@ -308,5 +308,6 @@ NB: This project targets TypeScript 4 in strict mode.
 ## Roadmap
 
 * Move common functionality to stdlib.
-* Implement IntegerCodec as a wrapper for NumberCodec.
+* Implement IntegerCodec.
 * Decide whether RecordCodec should code Record<string, V> or Record<string, V | undefined>.
+* Implement StringLiteralCodec, NumberLiteralCodec, BinaryLiteralCodec, BigIntLiteralCodec and IntegerLiteralCodec.
