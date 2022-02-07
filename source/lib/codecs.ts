@@ -734,3 +734,123 @@ export const Intersection = {
 		return new IntersectionCodec(...codecs);
 	}
 };
+
+export class StringLiteralCodec<V extends string> extends Codec<V> {
+	private value: V;
+
+	constructor(value: V) {
+		super();
+		this.value = value;
+	}
+
+	decodePayload(parser: utils.Parser | Uint8Array): V {
+		let subject = String.decodePayload(parser);
+		if (subject !== this.value) {
+			throw `Expected "${this.value}"!`;
+		}
+		return this.value;
+	}
+
+	encodePayload(subject: V): Uint8Array {
+		if (subject !== this.value) {
+			throw `Expected "${this.value}"!`;
+		}
+		return String.encodePayload(subject);
+	}
+};
+
+export const StringLiteral = {
+	of<V extends string>(value: V): StringLiteralCodec<V> {
+		return new StringLiteralCodec(value);
+	}
+};
+
+export class NumberLiteralCodec<V extends number> extends Codec<V> {
+	private value: V;
+
+	constructor(value: V) {
+		super();
+		this.value = value;
+	}
+
+	decodePayload(parser: utils.Parser | Uint8Array): V {
+		let subject = Number.decodePayload(parser);
+		if (subject !== this.value) {
+			throw `Expected ${this.value}!`;
+		}
+		return this.value;
+	}
+
+	encodePayload(subject: V): Uint8Array {
+		if (subject !== this.value) {
+			throw `Expected ${this.value}!`;
+		}
+		return Number.encodePayload(subject);
+	}
+};
+
+export const NumberLiteral = {
+	of<V extends number>(value: V): NumberLiteralCodec<V> {
+		return new NumberLiteralCodec(value);
+	}
+};
+
+export class BigIntLiteralCodec<V extends bigint> extends Codec<V> {
+	private value: V;
+
+	constructor(value: V) {
+		super();
+		this.value = value;
+	}
+
+	decodePayload(parser: utils.Parser | Uint8Array): V {
+		let subject = BigInt.decodePayload(parser);
+		if (subject !== this.value) {
+			throw `Expected ${this.value}!`;
+		}
+		return this.value;
+	}
+
+	encodePayload(subject: V): Uint8Array {
+		if (subject !== this.value) {
+			throw `Expected ${this.value}!`;
+		}
+		return BigInt.encodePayload(subject);
+	}
+};
+
+export const BigIntLiteral = {
+	of<V extends bigint>(value: V): BigIntLiteralCodec<V> {
+		return new BigIntLiteralCodec(value);
+	}
+};
+
+export class BooleanLiteralCodec<V extends boolean> extends Codec<V> {
+	private value: V;
+
+	constructor(value: V) {
+		super();
+		this.value = value;
+	}
+
+	decodePayload(parser: utils.Parser | Uint8Array): V {
+		let subject = Boolean.decodePayload(parser);
+		if (subject !== this.value) {
+			throw `Expected ${this.value}!`;
+		}
+		return this.value;
+	}
+
+	encodePayload(subject: V): Uint8Array {
+		if (subject !== this.value) {
+			throw `Expected ${this.value}!`;
+		}
+		return Boolean.encodePayload(subject);
+	}
+};
+
+export const BooleanLiteral = {
+	of<V extends boolean>(value: V): BooleanLiteralCodec<V> {
+		return new BooleanLiteralCodec(value);
+	}
+};
