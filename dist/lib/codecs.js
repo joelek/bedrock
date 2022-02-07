@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Intersection = exports.IntersectionCodec = exports.Union = exports.UnionCodec = exports.Object = exports.ObjectCodec = exports.Tuple = exports.TupleCodec = exports.Record = exports.RecordCodec = exports.Array = exports.ArrayCodec = exports.Boolean = exports.BooleanCodec = exports.Unknown = exports.UnknownCodec = exports.UnknownValue = exports.Map = exports.MapCodec = exports.List = exports.ListCodec = exports.BigInt = exports.BigIntCodec = exports.Binary = exports.BinaryCodec = exports.String = exports.StringCodec = exports.Number = exports.NumberCodec = exports.True = exports.TrueCodec = exports.False = exports.FalseCodec = exports.Null = exports.NullCodec = exports.Any = exports.AnyCodec = exports.Codec = exports.Tag = exports.Packet = void 0;
+exports.BooleanLiteral = exports.BooleanLiteralCodec = exports.BigIntLiteral = exports.BigIntLiteralCodec = exports.NumberLiteral = exports.NumberLiteralCodec = exports.StringLiteral = exports.StringLiteralCodec = exports.Intersection = exports.IntersectionCodec = exports.Union = exports.UnionCodec = exports.Object = exports.ObjectCodec = exports.Tuple = exports.TupleCodec = exports.Record = exports.RecordCodec = exports.Array = exports.ArrayCodec = exports.Boolean = exports.BooleanCodec = exports.Unknown = exports.UnknownCodec = exports.UnknownValue = exports.Map = exports.MapCodec = exports.List = exports.ListCodec = exports.BigInt = exports.BigIntCodec = exports.Binary = exports.BinaryCodec = exports.String = exports.StringCodec = exports.Number = exports.NumberCodec = exports.True = exports.TrueCodec = exports.False = exports.FalseCodec = exports.Null = exports.NullCodec = exports.Any = exports.AnyCodec = exports.Codec = exports.Tag = exports.Packet = void 0;
 const utils = require("./utils");
 class Packet {
     constructor() { }
@@ -698,5 +698,113 @@ exports.IntersectionCodec = IntersectionCodec;
 exports.Intersection = {
     of(...codecs) {
         return new IntersectionCodec(...codecs);
+    }
+};
+class StringLiteralCodec extends Codec {
+    value;
+    constructor(value) {
+        super();
+        this.value = value;
+    }
+    decodePayload(parser) {
+        let subject = exports.String.decodePayload(parser);
+        if (subject !== this.value) {
+            throw `Expected "${this.value}"!`;
+        }
+        return this.value;
+    }
+    encodePayload(subject) {
+        if (subject !== this.value) {
+            throw `Expected "${this.value}"!`;
+        }
+        return exports.String.encodePayload(subject);
+    }
+}
+exports.StringLiteralCodec = StringLiteralCodec;
+;
+exports.StringLiteral = {
+    of(value) {
+        return new StringLiteralCodec(value);
+    }
+};
+class NumberLiteralCodec extends Codec {
+    value;
+    constructor(value) {
+        super();
+        this.value = value;
+    }
+    decodePayload(parser) {
+        let subject = exports.Number.decodePayload(parser);
+        if (subject !== this.value) {
+            throw `Expected ${this.value}!`;
+        }
+        return this.value;
+    }
+    encodePayload(subject) {
+        if (subject !== this.value) {
+            throw `Expected ${this.value}!`;
+        }
+        return exports.Number.encodePayload(subject);
+    }
+}
+exports.NumberLiteralCodec = NumberLiteralCodec;
+;
+exports.NumberLiteral = {
+    of(value) {
+        return new NumberLiteralCodec(value);
+    }
+};
+class BigIntLiteralCodec extends Codec {
+    value;
+    constructor(value) {
+        super();
+        this.value = value;
+    }
+    decodePayload(parser) {
+        let subject = exports.BigInt.decodePayload(parser);
+        if (subject !== this.value) {
+            throw `Expected ${this.value}!`;
+        }
+        return this.value;
+    }
+    encodePayload(subject) {
+        if (subject !== this.value) {
+            throw `Expected ${this.value}!`;
+        }
+        return exports.BigInt.encodePayload(subject);
+    }
+}
+exports.BigIntLiteralCodec = BigIntLiteralCodec;
+;
+exports.BigIntLiteral = {
+    of(value) {
+        return new BigIntLiteralCodec(value);
+    }
+};
+class BooleanLiteralCodec extends Codec {
+    value;
+    constructor(value) {
+        super();
+        this.value = value;
+    }
+    decodePayload(parser) {
+        let subject = exports.Boolean.decodePayload(parser);
+        if (subject !== this.value) {
+            throw `Expected ${this.value}!`;
+        }
+        return this.value;
+    }
+    encodePayload(subject) {
+        if (subject !== this.value) {
+            throw `Expected ${this.value}!`;
+        }
+        return exports.Boolean.encodePayload(subject);
+    }
+}
+exports.BooleanLiteralCodec = BooleanLiteralCodec;
+;
+exports.BooleanLiteral = {
+    of(value) {
+        return new BooleanLiteralCodec(value);
     }
 };

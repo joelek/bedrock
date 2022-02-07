@@ -739,3 +739,59 @@ function recordEquals(one, two) {
         console.assert(recordEquals(observed, expected));
     });
 })();
+(() => {
+    test(`It should encode "a" as string_literal<"a"> properly.`, async () => {
+        let codec = codecs.StringLiteral.of("a");
+        let observed = codec.encode("a");
+        let expected = Uint8Array.of(0x02, 0x04, 0x61);
+        console.assert(utils.Chunk.equals(observed, expected));
+    });
+    test(`It should decode "a" as string_literal<"a"> properly.`, async () => {
+        let codec = codecs.StringLiteral.of("a");
+        let observed = codec.decode(Uint8Array.of(0x02, 0x04, 0x61));
+        let expected = "a";
+        console.assert(observed === expected);
+    });
+})();
+(() => {
+    test(`It should encode 0 as number_literal<0> properly.`, async () => {
+        let codec = codecs.NumberLiteral.of(0);
+        let observed = codec.encode(0);
+        let expected = Uint8Array.of(0x09, 0x03, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+        console.assert(utils.Chunk.equals(observed, expected));
+    });
+    test(`It should decode 0 as number_literal<0> properly.`, async () => {
+        let codec = codecs.NumberLiteral.of(0);
+        let observed = codec.decode(Uint8Array.of(0x09, 0x03, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00));
+        let expected = 0;
+        console.assert(observed === expected);
+    });
+})();
+(() => {
+    test(`It should encode 0n as bigint_literal<0n> properly.`, async () => {
+        let codec = codecs.BigIntLiteral.of(0n);
+        let observed = codec.encode(0n);
+        let expected = Uint8Array.of(0x03, 0x06, 0x80, 0x00);
+        console.assert(utils.Chunk.equals(observed, expected));
+    });
+    test(`It should decode 0n as bigint_literal<0n> properly.`, async () => {
+        let codec = codecs.BigIntLiteral.of(0n);
+        let observed = codec.decode(Uint8Array.of(0x03, 0x06, 0x80, 0x00));
+        let expected = 0n;
+        console.assert(observed === expected);
+    });
+})();
+(() => {
+    test(`It should encode false as boolean_literal<false> properly.`, async () => {
+        let codec = codecs.BooleanLiteral.of(false);
+        let observed = codec.encode(false);
+        let expected = Uint8Array.of(0x01, 0x01);
+        console.assert(utils.Chunk.equals(observed, expected));
+    });
+    test(`It should decode false as boolean_literal<false> properly.`, async () => {
+        let codec = codecs.BooleanLiteral.of(false);
+        let observed = codec.decode(Uint8Array.of(0x01, 0x01));
+        let expected = false;
+        console.assert(observed === expected);
+    });
+})();

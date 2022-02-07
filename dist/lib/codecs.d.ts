@@ -160,4 +160,40 @@ export declare class IntersectionCodec<V extends any[]> extends Codec<Intersecti
 export declare const Intersection: {
     of<V extends any[]>(...codecs: CodecRecord<V>): IntersectionCodec<V>;
 };
+export declare class StringLiteralCodec<V extends string> extends Codec<V> {
+    private value;
+    constructor(value: V);
+    decodePayload(parser: utils.Parser | Uint8Array): V;
+    encodePayload(subject: V): Uint8Array;
+}
+export declare const StringLiteral: {
+    of<V extends string>(value: V): StringLiteralCodec<V>;
+};
+export declare class NumberLiteralCodec<V extends number> extends Codec<V> {
+    private value;
+    constructor(value: V);
+    decodePayload(parser: utils.Parser | Uint8Array): V;
+    encodePayload(subject: V): Uint8Array;
+}
+export declare const NumberLiteral: {
+    of<V extends number>(value: V): NumberLiteralCodec<V>;
+};
+export declare class BigIntLiteralCodec<V extends bigint> extends Codec<V> {
+    private value;
+    constructor(value: V);
+    decodePayload(parser: utils.Parser | Uint8Array): V;
+    encodePayload(subject: V): Uint8Array;
+}
+export declare const BigIntLiteral: {
+    of<V extends bigint>(value: V): BigIntLiteralCodec<V>;
+};
+export declare class BooleanLiteralCodec<V extends boolean> extends Codec<V> {
+    private value;
+    constructor(value: V);
+    decodePayload(parser: utils.Parser | Uint8Array): V;
+    encodePayload(subject: V): Uint8Array;
+}
+export declare const BooleanLiteral: {
+    of<V extends boolean>(value: V): BooleanLiteralCodec<V>;
+};
 export {};
