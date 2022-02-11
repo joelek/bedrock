@@ -160,6 +160,12 @@ export declare class IntersectionCodec<V extends any[]> extends Codec<Intersecti
 export declare const Intersection: {
     of<V extends any[]>(...codecs: CodecRecord<V>): IntersectionCodec<V>;
 };
+export declare class IntegerCodec extends Codec<number> {
+    constructor();
+    decodePayload(parser: utils.Parser | Uint8Array): number;
+    encodePayload(subject: number): Uint8Array;
+}
+export declare const Integer: IntegerCodec;
 export declare class StringLiteralCodec<V extends string> extends Codec<V> {
     private value;
     constructor(value: V);
@@ -195,5 +201,14 @@ export declare class BooleanLiteralCodec<V extends boolean> extends Codec<V> {
 }
 export declare const BooleanLiteral: {
     of<V extends boolean>(value: V): BooleanLiteralCodec<V>;
+};
+export declare class IntegerLiteralCodec<V extends number> extends Codec<V> {
+    private value;
+    constructor(value: V);
+    decodePayload(parser: utils.Parser | Uint8Array): V;
+    encodePayload(subject: V): Uint8Array;
+}
+export declare const IntegerLiteral: {
+    of<V extends number>(value: V): IntegerLiteralCodec<V>;
 };
 export {};

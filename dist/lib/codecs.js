@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BooleanLiteral = exports.BooleanLiteralCodec = exports.BigIntLiteral = exports.BigIntLiteralCodec = exports.NumberLiteral = exports.NumberLiteralCodec = exports.StringLiteral = exports.StringLiteralCodec = exports.Intersection = exports.IntersectionCodec = exports.Union = exports.UnionCodec = exports.Object = exports.ObjectCodec = exports.Tuple = exports.TupleCodec = exports.Record = exports.RecordCodec = exports.Array = exports.ArrayCodec = exports.Boolean = exports.BooleanCodec = exports.Unknown = exports.UnknownCodec = exports.UnknownValue = exports.Map = exports.MapCodec = exports.List = exports.ListCodec = exports.BigInt = exports.BigIntCodec = exports.Binary = exports.BinaryCodec = exports.String = exports.StringCodec = exports.Number = exports.NumberCodec = exports.True = exports.TrueCodec = exports.False = exports.FalseCodec = exports.Null = exports.NullCodec = exports.Any = exports.AnyCodec = exports.Codec = exports.Tag = exports.Packet = void 0;
+exports.BooleanLiteral = exports.BooleanLiteralCodec = exports.BigIntLiteral = exports.BigIntLiteralCodec = exports.NumberLiteral = exports.NumberLiteralCodec = exports.StringLiteral = exports.StringLiteralCodec = exports.Integer = exports.IntegerCodec = exports.Intersection = exports.IntersectionCodec = exports.Union = exports.UnionCodec = exports.Object = exports.ObjectCodec = exports.Tuple = exports.TupleCodec = exports.Record = exports.RecordCodec = exports.Array = exports.ArrayCodec = exports.Boolean = exports.BooleanCodec = exports.Unknown = exports.UnknownCodec = exports.UnknownValue = exports.Map = exports.MapCodec = exports.List = exports.ListCodec = exports.BigInt = exports.BigIntCodec = exports.Binary = exports.BinaryCodec = exports.String = exports.StringCodec = exports.Number = exports.NumberCodec = exports.True = exports.TrueCodec = exports.False = exports.FalseCodec = exports.Null = exports.NullCodec = exports.Any = exports.AnyCodec = exports.Codec = exports.Tag = exports.Packet = void 0;
+exports.IntegerLiteral = exports.IntegerLiteralCodec = void 0;
 const utils = require("./utils");
 class Packet {
     constructor() { }
@@ -700,6 +701,27 @@ exports.Intersection = {
         return new IntersectionCodec(...codecs);
     }
 };
+class IntegerCodec extends Codec {
+    constructor() {
+        super();
+    }
+    decodePayload(parser) {
+        let subject = exports.BigInt.decodePayload(parser);
+        if (subject < globalThis.BigInt(globalThis.Number.MIN_SAFE_INTEGER)) {
+            throw `Expected ${subject} to be within safe range!`;
+        }
+        if (subject > globalThis.BigInt(globalThis.Number.MAX_SAFE_INTEGER)) {
+            throw `Expected ${subject} to be within safe range!`;
+        }
+        return globalThis.Number(subject);
+    }
+    encodePayload(subject) {
+        return exports.BigInt.encodePayload(globalThis.BigInt(subject));
+    }
+}
+exports.IntegerCodec = IntegerCodec;
+;
+exports.Integer = new IntegerCodec();
 class StringLiteralCodec extends Codec {
     value;
     constructor(value) {
@@ -806,5 +828,32 @@ exports.BooleanLiteralCodec = BooleanLiteralCodec;
 exports.BooleanLiteral = {
     of(value) {
         return new BooleanLiteralCodec(value);
+    }
+};
+class IntegerLiteralCodec extends Codec {
+    value;
+    constructor(value) {
+        super();
+        this.value = value;
+    }
+    decodePayload(parser) {
+        let subject = exports.Integer.decodePayload(parser);
+        if (subject !== this.value) {
+            throw `Expected ${this.value}!`;
+        }
+        return this.value;
+    }
+    encodePayload(subject) {
+        if (subject !== this.value) {
+            throw `Expected ${this.value}!`;
+        }
+        return exports.Integer.encodePayload(subject);
+    }
+}
+exports.IntegerLiteralCodec = IntegerLiteralCodec;
+;
+exports.IntegerLiteral = {
+    of(value) {
+        return new IntegerLiteralCodec(value);
     }
 };
