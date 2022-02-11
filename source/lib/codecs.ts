@@ -735,6 +735,29 @@ export const Intersection = {
 	}
 };
 
+export class IntegerCodec extends Codec<number> {
+	constructor() {
+		super();
+	}
+
+	decodePayload(parser: utils.Parser | Uint8Array): number {
+		let subject = BigInt.decodePayload(parser);
+		if (subject < globalThis.BigInt(globalThis.Number.MIN_SAFE_INTEGER)) {
+			throw `Expected ${subject} to be within safe range!`;
+		}
+		if (subject > globalThis.BigInt(globalThis.Number.MAX_SAFE_INTEGER)) {
+			throw `Expected ${subject} to be within safe range!`;
+		}
+		return globalThis.Number(subject);
+	}
+
+	encodePayload(subject: number): Uint8Array {
+		return BigInt.encodePayload(globalThis.BigInt(subject));
+	}
+};
+
+export const Integer = new IntegerCodec();
+
 export class StringLiteralCodec<V extends string> extends Codec<V> {
 	private value: V;
 
@@ -852,5 +875,35 @@ export class BooleanLiteralCodec<V extends boolean> extends Codec<V> {
 export const BooleanLiteral = {
 	of<V extends boolean>(value: V): BooleanLiteralCodec<V> {
 		return new BooleanLiteralCodec(value);
+	}
+};
+
+export class IntegerLiteralCodec<V extends number> extends Codec<V> {
+	private value: V;
+
+	constructor(value: V) {
+		super();
+		this.value = value;
+	}
+
+	decodePayload(parser: utils.Parser | Uint8Array): V {
+		let subject = Integer.decodePayload(parser);
+		if (subject !== this.value) {
+			throw `Expected ${this.value}!`;
+		}
+		return this.value;
+	}
+
+	encodePayload(subject: V): Uint8Array {
+		if (subject !== this.value) {
+			throw `Expected ${this.value}!`;
+		}
+		return Integer.encodePayload(subject);
+	}
+};
+
+export const IntegerLiteral = {
+	of<V extends number>(value: V): IntegerLiteralCodec<V> {
+		return new IntegerLiteralCodec(value);
 	}
 };

@@ -930,3 +930,35 @@ function recordEquals(one: Record<string, any>, two: Record<string, any>): boole
 		console.assert(observed === expected);
 	});
 })();
+
+(() => {
+	test(`It should encode 0 as integer_literal<0> properly.`, async () => {
+		let codec = codecs.IntegerLiteral.of(0);
+		let observed = codec.encode(0);
+		let expected = Uint8Array.of(0x03, 0x06, 0x80, 0x00);
+		console.assert(utils.Chunk.equals(observed, expected));
+	});
+
+	test(`It should decode 0 as integer_literal<0> properly.`, async () => {
+		let codec = codecs.IntegerLiteral.of(0);
+		let observed = codec.decode(Uint8Array.of(0x03, 0x06, 0x80, 0x00));
+		let expected = 0;
+		console.assert(observed === expected);
+	});
+})();
+
+(() => {
+	test(`It should encode 0 as integer properly.`, async () => {
+		let codec = codecs.Integer;
+		let observed = codec.encode(0);
+		let expected = Uint8Array.of(0x03, 0x06, 0x80, 0x00);
+		console.assert(utils.Chunk.equals(observed, expected));
+	});
+
+	test(`It should decode 0 as integer properly.`, async () => {
+		let codec = codecs.Integer;
+		let observed = codec.decode(Uint8Array.of(0x03, 0x06, 0x80, 0x00));
+		let expected = 0;
+		console.assert(observed === expected);
+	});
+})();
