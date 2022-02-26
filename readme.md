@@ -6,12 +6,12 @@ Sort-aware and extensible serialization format with distinguished encoding rules
 08 04 04 6B 65 79 06 04 76 61 6C 75 65
 
 08 (map tag)
-   04 (packet, 0x04 byte payload)
-      04 (string tag)
-          6B 65 79 ("key")
-   06 (packet, 0x06 byte payload)
-      04 (string tag)
-          76 61 6C 75 65 ("value")
+    04 (packet, 0x04 byte payload)
+        04 (string tag)
+            6B 65 79 ("key")
+    06 (packet, 0x06 byte payload)
+        04 (string tag)
+            76 61 6C 75 65 ("value")
 
 { "key": "value" }
 </pre>
@@ -243,12 +243,12 @@ The additional payload data consists of zero or more packets concatenated withou
 07 05 04 6A 6F 65 6C 03 04 65 6B
 
 07 (list tag)
-   05 (packet, 0x05 byte payload)
-      04 (string tag)
-         6A 6F 65 6C ("joel")
-   03 (packet, 0x03 byte payload)
-      04 (string tag)
-         65 6B ("ek")
+    05 (packet, 0x05 byte payload)
+        04 (string tag)
+            6A 6F 65 6C ("joel")
+    03 (packet, 0x03 byte payload)
+        04 (string tag)
+            65 6B ("ek")
 
 ["joel", "ek"]
 </pre>
@@ -265,12 +265,12 @@ The packet pairs are stored in the order determined by the sort-order of the pay
 08 05 04 6E 61 6D 65 05 04 6A 6F 65 6C
 
 08 (map tag)
-   05 (packet, 0x05 byte payload)
-      04 (string tag)
-         6E 61 6D 65 ("name")
-   05 (packet, 0x05 byte payload)
-      04 (string tag)
-         6A 6F 65 6C ("joel")
+    05 (packet, 0x05 byte payload)
+        04 (string tag)
+            6E 61 6D 65 ("name")
+    05 (packet, 0x05 byte payload)
+        04 (string tag)
+            6A 6F 65 6C ("joel")
 
 { "name": "joel" }
 </pre>
