@@ -37,12 +37,12 @@ var Tag;
 ;
 class Codec {
     constructor() { }
-    decode(parser) {
+    decode(parser, path = "") {
         let payload = Packet.decode(parser);
-        return this.decodePayload(payload);
+        return this.decodePayload(payload, path);
     }
-    encode(subject) {
-        let payload = this.encodePayload(subject);
+    encode(subject, path = "") {
+        let payload = this.encodePayload(subject, path);
         return Packet.encode(payload);
     }
 }
@@ -52,60 +52,60 @@ class AnyCodec extends Codec {
     constructor() {
         super();
     }
-    decodePayload(parser) {
+    decodePayload(parser, path = "") {
         parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
         return parser.tryArray([
-            (parser) => exports.Null.decodePayload(parser),
-            (parser) => exports.False.decodePayload(parser),
-            (parser) => exports.True.decodePayload(parser),
-            (parser) => exports.Number.decodePayload(parser),
-            (parser) => exports.String.decodePayload(parser),
-            (parser) => exports.Binary.decodePayload(parser),
-            (parser) => exports.BigInt.decodePayload(parser),
-            (parser) => exports.List.decodePayload(parser),
-            (parser) => exports.Map.decodePayload(parser),
-            (parser) => exports.Unknown.decodePayload(parser)
+            (parser) => exports.Null.decodePayload(parser, path),
+            (parser) => exports.False.decodePayload(parser, path),
+            (parser) => exports.True.decodePayload(parser, path),
+            (parser) => exports.Number.decodePayload(parser, path),
+            (parser) => exports.String.decodePayload(parser, path),
+            (parser) => exports.Binary.decodePayload(parser, path),
+            (parser) => exports.BigInt.decodePayload(parser, path),
+            (parser) => exports.List.decodePayload(parser, path),
+            (parser) => exports.Map.decodePayload(parser, path),
+            (parser) => exports.Unknown.decodePayload(parser, path)
         ]);
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         try {
-            return exports.Null.encodePayload(subject);
+            return exports.Null.encodePayload(subject, path);
         }
         catch (error) { }
         try {
-            return exports.False.encodePayload(subject);
+            return exports.False.encodePayload(subject, path);
         }
         catch (error) { }
         try {
-            return exports.True.encodePayload(subject);
+            return exports.True.encodePayload(subject, path);
         }
         catch (error) { }
         try {
-            return exports.Number.encodePayload(subject);
+            return exports.Number.encodePayload(subject, path);
         }
         catch (error) { }
         try {
-            return exports.String.encodePayload(subject);
+            return exports.String.encodePayload(subject, path);
         }
         catch (error) { }
         try {
-            return exports.Binary.encodePayload(subject);
+            return exports.Binary.encodePayload(subject, path);
         }
         catch (error) { }
         try {
-            return exports.BigInt.encodePayload(subject);
+            return exports.BigInt.encodePayload(subject, path);
         }
         catch (error) { }
         try {
-            return exports.List.encodePayload(subject);
+            return exports.List.encodePayload(subject, path);
         }
         catch (error) { }
         try {
-            return exports.Map.encodePayload(subject);
+            return exports.Map.encodePayload(subject, path);
         }
         catch (error) { }
         try {
-            return exports.Unknown.encodePayload(subject);
+            return exports.Unknown.encodePayload(subject, path);
         }
         catch (error) { }
         throw `Expected subject to be encodable!`;
@@ -118,16 +118,18 @@ class NullCodec extends Codec {
     constructor() {
         super();
     }
-    decodePayload(parser) {
+    decodePayload(parser, path = "") {
         parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
         return parser.try((parser) => {
-            utils.IntegerAssert.exactly(parser.unsigned(1), Tag.NULL);
+            if (parser.unsigned(1) !== Tag.NULL) {
+                throw `Expected Null at ${path}!`;
+            }
             return null;
         });
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         if (subject !== null) {
-            throw `Expected Null!`;
+            throw `Expected Null at ${path}!`;
         }
         let chunks = [];
         chunks.push(Uint8Array.of(Tag.NULL));
@@ -141,16 +143,18 @@ class FalseCodec extends Codec {
     constructor() {
         super();
     }
-    decodePayload(parser) {
+    decodePayload(parser, path = "") {
         parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
         return parser.try((parser) => {
-            utils.IntegerAssert.exactly(parser.unsigned(1), Tag.FALSE);
+            if (parser.unsigned(1) !== Tag.FALSE) {
+                throw `Expected False at ${path}!`;
+            }
             return false;
         });
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         if (subject !== false) {
-            throw `Expected False!`;
+            throw `Expected False at ${path}!`;
         }
         let chunks = [];
         chunks.push(Uint8Array.of(Tag.FALSE));
@@ -164,16 +168,18 @@ class TrueCodec extends Codec {
     constructor() {
         super();
     }
-    decodePayload(parser) {
+    decodePayload(parser, path = "") {
         parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
         return parser.try((parser) => {
-            utils.IntegerAssert.exactly(parser.unsigned(1), Tag.TRUE);
+            if (parser.unsigned(1) !== Tag.TRUE) {
+                throw `Expected True at ${path}!`;
+            }
             return true;
         });
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         if (subject !== true) {
-            throw `Expected True!`;
+            throw `Expected True at ${path}!`;
         }
         let chunks = [];
         chunks.push(Uint8Array.of(Tag.TRUE));
@@ -187,10 +193,12 @@ class NumberCodec extends Codec {
     constructor() {
         super();
     }
-    decodePayload(parser) {
+    decodePayload(parser, path = "") {
         parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
         return parser.try((parser) => {
-            utils.IntegerAssert.exactly(parser.unsigned(1), Tag.NUMBER);
+            if (parser.unsigned(1) !== Tag.NUMBER) {
+                throw `Expected Number at ${path}!`;
+            }
             let chunk = parser.chunk(8);
             if (((chunk[0] >> 7) & 0x01) === 0x01) {
                 chunk[0] ^= 0x80;
@@ -208,9 +216,9 @@ class NumberCodec extends Codec {
             return value;
         });
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         if (subject == null || subject.constructor !== globalThis.Number) {
-            throw `Expected Number!`;
+            throw `Expected Number at ${path}!`;
         }
         let chunks = [];
         chunks.push(Uint8Array.of(Tag.NUMBER));
@@ -239,17 +247,19 @@ class StringCodec extends Codec {
     constructor() {
         super();
     }
-    decodePayload(parser) {
+    decodePayload(parser, path = "") {
         parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
         return parser.try((parser) => {
-            utils.IntegerAssert.exactly(parser.unsigned(1), Tag.STRING);
+            if (parser.unsigned(1) !== Tag.STRING) {
+                throw `Expected String at ${path}!`;
+            }
             let value = utils.Chunk.toString(parser.chunk(), "utf-8");
             return value;
         });
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         if (subject == null || subject.constructor !== globalThis.String) {
-            throw `Expected String!`;
+            throw `Expected String at ${path}!`;
         }
         let chunks = [];
         chunks.push(Uint8Array.of(Tag.STRING));
@@ -264,17 +274,19 @@ class BinaryCodec extends Codec {
     constructor() {
         super();
     }
-    decodePayload(parser) {
+    decodePayload(parser, path = "") {
         parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
         return parser.try((parser) => {
-            utils.IntegerAssert.exactly(parser.unsigned(1), Tag.BINARY);
+            if (parser.unsigned(1) !== Tag.BINARY) {
+                throw `Expected Binary at ${path}!`;
+            }
             let value = parser.chunk();
             return value;
         });
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         if (subject == null || subject.constructor !== globalThis.Uint8Array) {
-            throw `Expected Binary!`;
+            throw `Expected Binary at ${path}!`;
         }
         let chunks = [];
         chunks.push(Uint8Array.of(Tag.BINARY));
@@ -289,10 +301,12 @@ class BigIntCodec extends Codec {
     constructor() {
         super();
     }
-    decodePayload(parser) {
+    decodePayload(parser, path = "") {
         parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
         return parser.try((parser) => {
-            utils.IntegerAssert.exactly(parser.unsigned(1), Tag.BIGINT);
+            if (parser.unsigned(1) !== Tag.BIGINT) {
+                throw `Expected BigInt at ${path}!`;
+            }
             let category = utils.VarCategory.decode(parser);
             let value = 0n;
             if (category >= 0) {
@@ -316,9 +330,9 @@ class BigIntCodec extends Codec {
             return value;
         });
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         if (subject == null || subject.constructor !== globalThis.BigInt) {
-            throw `Expected BigInt!`;
+            throw `Expected BigInt at ${path}!`;
         }
         let chunks = [];
         chunks.push(Uint8Array.of(Tag.BIGINT));
@@ -356,25 +370,28 @@ class ListCodec extends Codec {
     constructor() {
         super();
     }
-    decodePayload(parser, decode) {
+    decodePayload(parser, path = "", decode) {
         parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
         return parser.try((parser) => {
-            utils.IntegerAssert.exactly(parser.unsigned(1), Tag.LIST);
-            decode = decode ?? ((key, parser) => exports.Any.decode(parser));
+            if (parser.unsigned(1) !== Tag.LIST) {
+                throw `Expected List at ${path}!`;
+            }
+            decode = decode ?? ((key, path, parser) => exports.Any.decode(parser, path));
             let value = [];
             let index = 0;
             while (!parser.eof()) {
-                value.push(decode(index, parser));
+                let subpath = `${path}[${index}]`;
+                value.push(decode(index, subpath, parser));
                 index += 1;
             }
             return value;
         });
     }
-    encodePayload(subject, encode) {
+    encodePayload(subject, path = "", encode) {
         if (subject == null || subject.constructor !== globalThis.Array) {
-            throw `Expected Array!`;
+            throw `Expected List at ${path}!`;
         }
-        encode = encode ?? ((key, subject) => exports.Any.encode(subject));
+        encode = encode ?? ((key, path, subject) => exports.Any.encode(subject, path));
         let chunks = [];
         chunks.push(Uint8Array.of(Tag.LIST));
         for (let index = 0; index < subject.length; index++) {
@@ -382,7 +399,8 @@ class ListCodec extends Codec {
             if (value === undefined) {
                 value = null;
             }
-            chunks.push(encode(index, value));
+            let subpath = `${path}[${index}]`;
+            chunks.push(encode(index, subpath, value));
         }
         return utils.Chunk.concat(chunks);
     }
@@ -394,24 +412,27 @@ class MapCodec extends Codec {
     constructor() {
         super();
     }
-    decodePayload(parser, decode) {
+    decodePayload(parser, path = "", decode) {
         parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
         return parser.try((parser) => {
-            utils.IntegerAssert.exactly(parser.unsigned(1), Tag.MAP);
-            decode = decode ?? ((key, parser) => exports.Any.decode(parser));
+            if (parser.unsigned(1) !== Tag.MAP) {
+                throw `Expected Map at ${path}!`;
+            }
+            decode = decode ?? ((key, path, parser) => exports.Any.decode(parser, path));
             let value = {};
             while (!parser.eof()) {
                 let key = exports.String.decode(parser);
-                value[key] = decode(key, parser);
+                let subpath = /^[a-z][a-z0-9_]*$/isu.test(key) ? `${path}.${key}` : `${path}["${key}"]`;
+                value[key] = decode(key, subpath, parser);
             }
             return value;
         });
     }
-    encodePayload(subject, encode) {
+    encodePayload(subject, path = "", encode) {
         if (subject == null || subject.constructor !== globalThis.Object) {
-            throw `Expected Object!`;
+            throw `Expected Map at ${path}!`;
         }
-        encode = encode ?? ((key, subject) => exports.Any.encode(subject));
+        encode = encode ?? ((key, path, subject) => exports.Any.encode(subject, path));
         let chunks = [];
         chunks.push(Uint8Array.of(Tag.MAP));
         let pairs = [];
@@ -420,9 +441,10 @@ class MapCodec extends Codec {
             if (value === undefined) {
                 continue;
             }
+            let subpath = /^[a-z][a-z0-9_]*$/isu.test(key) ? `${path}.${key}` : `${path}["${key}"]`;
             pairs.push({
                 key: exports.String.encodePayload(key),
-                value: encode(key, value)
+                value: encode(key, subpath, value)
             });
         }
         pairs.sort((one, two) => utils.Chunk.comparePrefixes(one.key, two.key));
@@ -455,16 +477,16 @@ class UnknownCodec extends Codec {
     constructor() {
         super();
     }
-    decodePayload(parser) {
+    decodePayload(parser, path = "") {
         parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
         return parser.try((parser) => {
             let value = parser.chunk();
             return new UnknownValue(value);
         });
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         if (subject == null || subject.constructor !== UnknownValue) {
-            throw `Expected Unknown!`;
+            throw `Expected Unknown at ${path}!`;
         }
         let chunks = [];
         chunks.push(subject.getChunk());
@@ -478,19 +500,19 @@ class BooleanCodec extends Codec {
     constructor() {
         super();
     }
-    decodePayload(parser) {
+    decodePayload(parser, path = "") {
         parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
         return parser.tryArray([
-            (parser) => exports.True.decodePayload(parser),
-            (parser) => exports.False.decodePayload(parser)
+            (parser) => exports.True.decodePayload(parser, path),
+            (parser) => exports.False.decodePayload(parser, path)
         ]);
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         if (subject) {
-            return exports.True.encodePayload(subject);
+            return exports.True.encodePayload(subject, path);
         }
         else {
-            return exports.False.encodePayload(subject);
+            return exports.False.encodePayload(subject, path);
         }
     }
 }
@@ -503,14 +525,14 @@ class ArrayCodec extends Codec {
         super();
         this.codec = codec;
     }
-    decodePayload(parser) {
-        return exports.List.decodePayload(parser, (index, parser) => {
-            return this.codec.decode(parser);
+    decodePayload(parser, path = "") {
+        return exports.List.decodePayload(parser, path, (index, path, parser) => {
+            return this.codec.decode(parser, path);
         });
     }
-    encodePayload(subject) {
-        return exports.List.encodePayload(subject, (index, subject) => {
-            return this.codec.encode(subject);
+    encodePayload(subject, path = "") {
+        return exports.List.encodePayload(subject, path, (index, path, subject) => {
+            return this.codec.encode(subject, path);
         });
     }
 }
@@ -527,14 +549,14 @@ class RecordCodec extends Codec {
         super();
         this.codec = codec;
     }
-    decodePayload(parser) {
-        return exports.Map.decodePayload(parser, (key, parser) => {
-            return this.codec.decode(parser);
+    decodePayload(parser, path = "") {
+        return exports.Map.decodePayload(parser, path, (key, path, parser) => {
+            return this.codec.decode(parser, path);
         });
     }
-    encodePayload(subject) {
-        return exports.Map.encodePayload(subject, (key, subject) => {
-            return this.codec.encode(subject);
+    encodePayload(subject, path = "") {
+        return exports.Map.encodePayload(subject, path, (key, path, subject) => {
+            return this.codec.encode(subject, path);
         });
     }
 }
@@ -551,17 +573,17 @@ class TupleCodec extends Codec {
         super();
         this.codecs = codecs;
     }
-    decodePayload(parser) {
+    decodePayload(parser, path = "") {
         parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
         return parser.try((parser) => {
             let indices = new globalThis.Set(this.codecs.keys());
-            let subject = exports.List.decodePayload(parser, (index, parser) => {
+            let subject = exports.List.decodePayload(parser, path, (index, path, parser) => {
                 indices.delete(index);
                 if (index in this.codecs) {
-                    return this.codecs[index].decode(parser);
+                    return this.codecs[index].decode(parser, path);
                 }
                 else {
-                    return exports.Any.decode(parser);
+                    return exports.Any.decode(parser, path);
                 }
             });
             if (indices.size !== 0) {
@@ -570,15 +592,15 @@ class TupleCodec extends Codec {
             return subject;
         });
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         let indices = new globalThis.Set(this.codecs.keys());
-        let payload = exports.List.encodePayload(subject, (index, subject) => {
+        let payload = exports.List.encodePayload(subject, path, (index, path, subject) => {
             indices.delete(index);
             if (index in this.codecs) {
-                return this.codecs[index].encode(subject);
+                return this.codecs[index].encode(subject, path);
             }
             else {
-                return exports.Any.encode(subject);
+                return exports.Any.encode(subject, path);
             }
         });
         if (indices.size !== 0) {
@@ -600,17 +622,17 @@ class ObjectCodec extends Codec {
         super();
         this.codecs = codecs;
     }
-    decodePayload(parser) {
+    decodePayload(parser, path = "") {
         parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
         return parser.try((parser) => {
             let keys = new Set(globalThis.Object.keys(this.codecs));
-            let subject = exports.Map.decodePayload(parser, (key, parser) => {
+            let subject = exports.Map.decodePayload(parser, path, (key, path, parser) => {
                 keys.delete(key);
                 if (key in this.codecs) {
-                    return this.codecs[key].decode(parser);
+                    return this.codecs[key].decode(parser, path);
                 }
                 else {
-                    return exports.Any.decode(parser);
+                    return exports.Any.decode(parser, path);
                 }
             });
             if (keys.size !== 0) {
@@ -619,15 +641,15 @@ class ObjectCodec extends Codec {
             return subject;
         });
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         let keys = new Set(globalThis.Object.keys(this.codecs));
-        let payload = exports.Map.encodePayload(subject, (key, subject) => {
+        let payload = exports.Map.encodePayload(subject, path, (key, path, subject) => {
             keys.delete(key);
             if (key in this.codecs) {
-                return this.codecs[key].encode(subject);
+                return this.codecs[key].encode(subject, path);
             }
             else {
-                return exports.Any.encode(subject);
+                return exports.Any.encode(subject, path);
             }
         });
         if (keys.size !== 0) {
@@ -649,19 +671,19 @@ class UnionCodec extends Codec {
         super();
         this.codecs = codecs;
     }
-    decodePayload(parser) {
+    decodePayload(parser, path = "") {
         for (let codec of this.codecs) {
             try {
-                return codec.decodePayload(parser);
+                return codec.decodePayload(parser, path);
             }
             catch (error) { }
         }
         throw `Expected subject to be decodable!`;
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         for (let codec of this.codecs) {
             try {
-                return codec.encodePayload(subject);
+                return codec.encodePayload(subject, path);
             }
             catch (error) { }
         }
@@ -681,17 +703,17 @@ class IntersectionCodec extends Codec {
         super();
         this.codecs = codecs;
     }
-    decodePayload(parser) {
+    decodePayload(parser, path = "") {
         for (let codec of this.codecs) {
-            codec.decodePayload(parser);
+            codec.decodePayload(parser, path);
         }
-        return exports.Any.decodePayload(parser);
+        return exports.Any.decodePayload(parser, path);
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         for (let codec of this.codecs) {
-            codec.encodePayload(subject);
+            codec.encodePayload(subject, path);
         }
-        return exports.Any.encodePayload(subject);
+        return exports.Any.encodePayload(subject, path);
     }
 }
 exports.IntersectionCodec = IntersectionCodec;
@@ -705,18 +727,18 @@ class IntegerCodec extends Codec {
     constructor() {
         super();
     }
-    decodePayload(parser) {
-        let subject = exports.BigInt.decodePayload(parser);
+    decodePayload(parser, path = "") {
+        let subject = exports.BigInt.decodePayload(parser, path);
         if (subject < globalThis.BigInt(globalThis.Number.MIN_SAFE_INTEGER)) {
-            throw `Expected ${subject} to be within safe range!`;
+            throw `Expected ${subject} at ${path} to be within safe range!`;
         }
         if (subject > globalThis.BigInt(globalThis.Number.MAX_SAFE_INTEGER)) {
-            throw `Expected ${subject} to be within safe range!`;
+            throw `Expected ${subject} at ${path} to be within safe range!`;
         }
         return globalThis.Number(subject);
     }
-    encodePayload(subject) {
-        return exports.BigInt.encodePayload(globalThis.BigInt(subject));
+    encodePayload(subject, path = "") {
+        return exports.BigInt.encodePayload(globalThis.BigInt(subject), path);
     }
 }
 exports.IntegerCodec = IntegerCodec;
@@ -728,18 +750,18 @@ class StringLiteralCodec extends Codec {
         super();
         this.value = value;
     }
-    decodePayload(parser) {
-        let subject = exports.String.decodePayload(parser);
+    decodePayload(parser, path = "") {
+        let subject = exports.String.decodePayload(parser, path);
         if (subject !== this.value) {
-            throw `Expected "${this.value}"!`;
+            throw `Expected "${this.value}" at ${path}!`;
         }
         return this.value;
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         if (subject !== this.value) {
-            throw `Expected "${this.value}"!`;
+            throw `Expected "${this.value}" at ${path}!`;
         }
-        return exports.String.encodePayload(subject);
+        return exports.String.encodePayload(subject, path);
     }
 }
 exports.StringLiteralCodec = StringLiteralCodec;
@@ -755,18 +777,18 @@ class NumberLiteralCodec extends Codec {
         super();
         this.value = value;
     }
-    decodePayload(parser) {
-        let subject = exports.Number.decodePayload(parser);
+    decodePayload(parser, path = "") {
+        let subject = exports.Number.decodePayload(parser, path);
         if (subject !== this.value) {
-            throw `Expected ${this.value}!`;
+            throw `Expected ${this.value} at ${path}!`;
         }
         return this.value;
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         if (subject !== this.value) {
-            throw `Expected ${this.value}!`;
+            throw `Expected ${this.value} at ${path}!`;
         }
-        return exports.Number.encodePayload(subject);
+        return exports.Number.encodePayload(subject, path);
     }
 }
 exports.NumberLiteralCodec = NumberLiteralCodec;
@@ -782,18 +804,18 @@ class BigIntLiteralCodec extends Codec {
         super();
         this.value = value;
     }
-    decodePayload(parser) {
-        let subject = exports.BigInt.decodePayload(parser);
+    decodePayload(parser, path = "") {
+        let subject = exports.BigInt.decodePayload(parser, path);
         if (subject !== this.value) {
-            throw `Expected ${this.value}!`;
+            throw `Expected ${this.value} at ${path}!`;
         }
         return this.value;
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         if (subject !== this.value) {
-            throw `Expected ${this.value}!`;
+            throw `Expected ${this.value} at ${path}!`;
         }
-        return exports.BigInt.encodePayload(subject);
+        return exports.BigInt.encodePayload(subject, path);
     }
 }
 exports.BigIntLiteralCodec = BigIntLiteralCodec;
@@ -809,18 +831,18 @@ class BooleanLiteralCodec extends Codec {
         super();
         this.value = value;
     }
-    decodePayload(parser) {
-        let subject = exports.Boolean.decodePayload(parser);
+    decodePayload(parser, path = "") {
+        let subject = exports.Boolean.decodePayload(parser, path);
         if (subject !== this.value) {
-            throw `Expected ${this.value}!`;
+            throw `Expected ${this.value} at ${path}!`;
         }
         return this.value;
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         if (subject !== this.value) {
-            throw `Expected ${this.value}!`;
+            throw `Expected ${this.value} at ${path}!`;
         }
-        return exports.Boolean.encodePayload(subject);
+        return exports.Boolean.encodePayload(subject, path);
     }
 }
 exports.BooleanLiteralCodec = BooleanLiteralCodec;
@@ -836,18 +858,18 @@ class IntegerLiteralCodec extends Codec {
         super();
         this.value = value;
     }
-    decodePayload(parser) {
-        let subject = exports.Integer.decodePayload(parser);
+    decodePayload(parser, path = "") {
+        let subject = exports.Integer.decodePayload(parser, path);
         if (subject !== this.value) {
-            throw `Expected ${this.value}!`;
+            throw `Expected ${this.value} at ${path}!`;
         }
         return this.value;
     }
-    encodePayload(subject) {
+    encodePayload(subject, path = "") {
         if (subject !== this.value) {
-            throw `Expected ${this.value}!`;
+            throw `Expected ${this.value} at ${path}!`;
         }
-        return exports.Integer.encodePayload(subject);
+        return exports.Integer.encodePayload(subject, path);
     }
 }
 exports.IntegerLiteralCodec = IntegerLiteralCodec;

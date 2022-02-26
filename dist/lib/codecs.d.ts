@@ -24,69 +24,69 @@ export declare enum Tag {
 }
 export declare abstract class Codec<V extends any> {
     constructor();
-    abstract decodePayload(parser: utils.Parser | Uint8Array): V;
-    abstract encodePayload(subject: V): Uint8Array;
-    decode(parser: utils.Parser | Uint8Array): V;
-    encode(subject: V): Uint8Array;
+    abstract decodePayload(parser: utils.Parser | Uint8Array, path?: string): V;
+    abstract encodePayload(subject: V, path?: string): Uint8Array;
+    decode(parser: utils.Parser | Uint8Array, path?: string): V;
+    encode(subject: V, path?: string): Uint8Array;
 }
 export declare class AnyCodec extends Codec<any> {
     constructor();
-    decodePayload(parser: utils.Parser | Uint8Array): any;
-    encodePayload(subject: any): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): any;
+    encodePayload(subject: any, path?: string): Uint8Array;
 }
 export declare const Any: AnyCodec;
 export declare class NullCodec extends Codec<null> {
     constructor();
-    decodePayload(parser: utils.Parser | Uint8Array): null;
-    encodePayload(subject: null): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): null;
+    encodePayload(subject: null, path?: string): Uint8Array;
 }
 export declare const Null: NullCodec;
 export declare class FalseCodec extends Codec<false> {
     constructor();
-    decodePayload(parser: utils.Parser | Uint8Array): false;
-    encodePayload(subject: false): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): false;
+    encodePayload(subject: false, path?: string): Uint8Array;
 }
 export declare const False: FalseCodec;
 export declare class TrueCodec extends Codec<true> {
     constructor();
-    decodePayload(parser: utils.Parser | Uint8Array): true;
-    encodePayload(subject: true): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): true;
+    encodePayload(subject: true, path?: string): Uint8Array;
 }
 export declare const True: TrueCodec;
 export declare class NumberCodec extends Codec<number> {
     constructor();
-    decodePayload(parser: utils.Parser | Uint8Array): number;
-    encodePayload(subject: number): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): number;
+    encodePayload(subject: number, path?: string): Uint8Array;
 }
 export declare const Number: NumberCodec;
 export declare class StringCodec extends Codec<string> {
     constructor();
-    decodePayload(parser: utils.Parser | Uint8Array): string;
-    encodePayload(subject: string): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): string;
+    encodePayload(subject: string, path?: string): Uint8Array;
 }
 export declare const String: StringCodec;
 export declare class BinaryCodec extends Codec<Uint8Array> {
     constructor();
-    decodePayload(parser: utils.Parser | Uint8Array): Uint8Array;
-    encodePayload(subject: Uint8Array): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): Uint8Array;
+    encodePayload(subject: Uint8Array, path?: string): Uint8Array;
 }
 export declare const Binary: BinaryCodec;
 export declare class BigIntCodec extends Codec<bigint> {
     constructor();
-    decodePayload(parser: utils.Parser | Uint8Array): bigint;
-    encodePayload(subject: bigint): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): bigint;
+    encodePayload(subject: bigint, path?: string): Uint8Array;
 }
 export declare const BigInt: BigIntCodec;
 export declare class ListCodec extends Codec<Array<any>> {
     constructor();
-    decodePayload(parser: utils.Parser | Uint8Array, decode?: (index: number, parser: utils.Parser) => any): Array<any>;
-    encodePayload(subject: Array<any>, encode?: (index: number, subject: any) => Uint8Array): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string, decode?: (index: number, path: string, parser: utils.Parser) => any): Array<any>;
+    encodePayload(subject: Array<any>, path?: string, encode?: (index: number, path: string, subject: any) => Uint8Array): Uint8Array;
 }
 export declare const List: ListCodec;
 export declare class MapCodec extends Codec<Record<string, any>> {
     constructor();
-    decodePayload(parser: utils.Parser | Uint8Array, decode?: (key: string, parser: utils.Parser) => any): Record<string, any>;
-    encodePayload(subject: Record<string, any>, encode?: (key: string, subject: any) => Uint8Array): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string, decode?: (key: string, path: string, parser: utils.Parser) => any): Record<string, any>;
+    encodePayload(subject: Record<string, any>, path?: string, encode?: (key: string, path: string, subject: any) => Uint8Array): Uint8Array;
 }
 export declare const Map: MapCodec;
 export declare class UnknownValue {
@@ -96,21 +96,21 @@ export declare class UnknownValue {
 }
 export declare class UnknownCodec extends Codec<UnknownValue> {
     constructor();
-    decodePayload(parser: utils.Parser | Uint8Array): UnknownValue;
-    encodePayload(subject: UnknownValue): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): UnknownValue;
+    encodePayload(subject: UnknownValue, path?: string): Uint8Array;
 }
 export declare const Unknown: UnknownCodec;
 export declare class BooleanCodec extends Codec<boolean> {
     constructor();
-    decodePayload(parser: utils.Parser | Uint8Array): boolean;
-    encodePayload(subject: boolean): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): boolean;
+    encodePayload(subject: boolean, path?: string): Uint8Array;
 }
 export declare const Boolean: BooleanCodec;
 export declare class ArrayCodec<V extends any> extends Codec<Array<V>> {
     private codec;
     constructor(codec: Codec<V>);
-    decodePayload(parser: utils.Parser | Uint8Array): Array<V>;
-    encodePayload(subject: Array<V>): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): Array<V>;
+    encodePayload(subject: Array<V>, path?: string): Uint8Array;
 }
 export declare const Array: {
     of<V extends unknown>(codec: Codec<V>): ArrayCodec<V>;
@@ -118,8 +118,8 @@ export declare const Array: {
 export declare class RecordCodec<V extends any> extends Codec<Record<string, V>> {
     private codec;
     constructor(codec: Codec<V>);
-    decodePayload(parser: utils.Parser | Uint8Array): Record<string, V>;
-    encodePayload(subject: Record<string, V>): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): Record<string, V>;
+    encodePayload(subject: Record<string, V>, path?: string): Uint8Array;
 }
 export declare const Record: {
     of<V extends unknown>(codec: Codec<V>): RecordCodec<V>;
@@ -127,8 +127,8 @@ export declare const Record: {
 export declare class TupleCodec<V extends any[]> extends Codec<[...V]> {
     private codecs;
     constructor(...codecs: CodecTuple<[...V]>);
-    decodePayload(parser: utils.Parser | Uint8Array): [...V];
-    encodePayload(subject: [...V]): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): [...V];
+    encodePayload(subject: [...V], path?: string): Uint8Array;
 }
 export declare const Tuple: {
     of<V extends any[]>(...codecs: CodecTuple<V>): TupleCodec<V>;
@@ -136,8 +136,8 @@ export declare const Tuple: {
 export declare class ObjectCodec<V extends Record<string, any>> extends Codec<V> {
     private codecs;
     constructor(codecs: CodecRecord<V>);
-    decodePayload(parser: utils.Parser | Uint8Array): V;
-    encodePayload(subject: V): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): V;
+    encodePayload(subject: V, path?: string): Uint8Array;
 }
 export declare const Object: {
     of<V extends Record<string, any>>(codecs: CodecRecord<V>): ObjectCodec<V>;
@@ -145,8 +145,8 @@ export declare const Object: {
 export declare class UnionCodec<V extends any[]> extends Codec<V[number]> {
     private codecs;
     constructor(...codecs: CodecTuple<[...V]>);
-    decodePayload(parser: utils.Parser | Uint8Array): V[number];
-    encodePayload(subject: V[number]): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): V[number];
+    encodePayload(subject: V[number], path?: string): Uint8Array;
 }
 export declare const Union: {
     of<V extends any[]>(...codecs: CodecTuple<V>): UnionCodec<V>;
@@ -154,23 +154,23 @@ export declare const Union: {
 export declare class IntersectionCodec<V extends any[]> extends Codec<IntersectionOf<V[number]>> {
     private codecs;
     constructor(...codecs: CodecRecord<[...V]>);
-    decodePayload(parser: utils.Parser | Uint8Array): IntersectionOf<V[number]>;
-    encodePayload(subject: IntersectionOf<V[number]>): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): IntersectionOf<V[number]>;
+    encodePayload(subject: IntersectionOf<V[number]>, path?: string): Uint8Array;
 }
 export declare const Intersection: {
     of<V extends any[]>(...codecs: CodecRecord<V>): IntersectionCodec<V>;
 };
 export declare class IntegerCodec extends Codec<number> {
     constructor();
-    decodePayload(parser: utils.Parser | Uint8Array): number;
-    encodePayload(subject: number): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): number;
+    encodePayload(subject: number, path?: string): Uint8Array;
 }
 export declare const Integer: IntegerCodec;
 export declare class StringLiteralCodec<V extends string> extends Codec<V> {
     private value;
     constructor(value: V);
-    decodePayload(parser: utils.Parser | Uint8Array): V;
-    encodePayload(subject: V): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): V;
+    encodePayload(subject: V, path?: string): Uint8Array;
 }
 export declare const StringLiteral: {
     of<V extends string>(value: V): StringLiteralCodec<V>;
@@ -178,8 +178,8 @@ export declare const StringLiteral: {
 export declare class NumberLiteralCodec<V extends number> extends Codec<V> {
     private value;
     constructor(value: V);
-    decodePayload(parser: utils.Parser | Uint8Array): V;
-    encodePayload(subject: V): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): V;
+    encodePayload(subject: V, path?: string): Uint8Array;
 }
 export declare const NumberLiteral: {
     of<V extends number>(value: V): NumberLiteralCodec<V>;
@@ -187,8 +187,8 @@ export declare const NumberLiteral: {
 export declare class BigIntLiteralCodec<V extends bigint> extends Codec<V> {
     private value;
     constructor(value: V);
-    decodePayload(parser: utils.Parser | Uint8Array): V;
-    encodePayload(subject: V): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): V;
+    encodePayload(subject: V, path?: string): Uint8Array;
 }
 export declare const BigIntLiteral: {
     of<V extends bigint>(value: V): BigIntLiteralCodec<V>;
@@ -196,8 +196,8 @@ export declare const BigIntLiteral: {
 export declare class BooleanLiteralCodec<V extends boolean> extends Codec<V> {
     private value;
     constructor(value: V);
-    decodePayload(parser: utils.Parser | Uint8Array): V;
-    encodePayload(subject: V): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): V;
+    encodePayload(subject: V, path?: string): Uint8Array;
 }
 export declare const BooleanLiteral: {
     of<V extends boolean>(value: V): BooleanLiteralCodec<V>;
@@ -205,8 +205,8 @@ export declare const BooleanLiteral: {
 export declare class IntegerLiteralCodec<V extends number> extends Codec<V> {
     private value;
     constructor(value: V);
-    decodePayload(parser: utils.Parser | Uint8Array): V;
-    encodePayload(subject: V): Uint8Array;
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): V;
+    encodePayload(subject: V, path?: string): Uint8Array;
 }
 export declare const IntegerLiteral: {
     of<V extends number>(value: V): IntegerLiteralCodec<V>;
