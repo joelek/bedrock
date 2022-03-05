@@ -198,7 +198,7 @@ The additional payload data consists of zero or more unicode code points encoded
 04 F0 9F 9A 80 ("🚀")
 </pre>
 
-N.B. Bedrock defines strings to be sequences of unicode code points implying that cryptographic applications are expected to handle the canonical equivalence problem.
+NB: Bedrock defines strings to be sequences of unicode code points implying that cryptographic applications are expected to handle the canonical equivalence problem.
 
 Consider the code point sequences [00 F1] and [00 6E, 03 03]. The byte sequences are different yet they are canonically equivalent as they both represent the character "ñ". This is not desirable for cryptographic applications which are expected to encode canonically composed or canonically decomposed code point sequences in a consistent manner.
 
