@@ -142,34 +142,184 @@ function test(name, cb) {
         let expected = false;
         console.assert(observed === expected);
     });
-    test(`It should compare chunks [0], [0] properly.`, async () => {
-        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0), Uint8Array.of(0));
+    test(`It should compare chunks ([0] < [0,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0), Uint8Array.of(0, 1));
+        let expected = -1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([1] > [0,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(1), Uint8Array.of(0, 1));
+        let expected = 1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([2] > [0,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(2), Uint8Array.of(0, 1));
+        let expected = 1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([0] < [1,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0), Uint8Array.of(1, 1));
+        let expected = -1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([1] < [1,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(1), Uint8Array.of(1, 1));
+        let expected = -1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([2] > [1,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(2), Uint8Array.of(1, 1));
+        let expected = 1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([0] < [2,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0), Uint8Array.of(2, 1));
+        let expected = -1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([1] < [2,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(1), Uint8Array.of(2, 1));
+        let expected = -1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([2] < [2,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(2), Uint8Array.of(2, 1));
+        let expected = -1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([0,0] < [0,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 0), Uint8Array.of(0, 1));
+        let expected = -1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([0,1] = [0,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 1), Uint8Array.of(0, 1));
         let expected = 0;
         console.assert(observed === expected);
     });
-    test(`It should compare chunks [0], [1] properly.`, async () => {
-        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0), Uint8Array.of(1));
+    test(`It should compare chunks ([0,2] > [0,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 2), Uint8Array.of(0, 1));
+        let expected = 1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([0,0] < [1,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 0), Uint8Array.of(1, 1));
         let expected = -1;
         console.assert(observed === expected);
     });
-    test(`It should compare chunks [1], [0] properly.`, async () => {
-        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(1), Uint8Array.of(0));
-        let expected = 1;
-        console.assert(observed === expected);
-    });
-    test(`It should compare chunks [0, 0], [0] properly.`, async () => {
-        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 0), Uint8Array.of(0));
-        let expected = 1;
-        console.assert(observed === expected);
-    });
-    test(`It should compare chunks [0, 1], [0] properly.`, async () => {
-        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 1), Uint8Array.of(0));
-        let expected = 1;
-        console.assert(observed === expected);
-    });
-    test(`It should compare chunks [0, 1], [1] properly.`, async () => {
-        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 1), Uint8Array.of(1));
+    test(`It should compare chunks ([0,1] < [1,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 1), Uint8Array.of(1, 1));
         let expected = -1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([0,2] < [1,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 2), Uint8Array.of(1, 1));
+        let expected = -1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([0,0] < [2,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 0), Uint8Array.of(2, 1));
+        let expected = -1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([0,1] < [2,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 1), Uint8Array.of(2, 1));
+        let expected = -1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([0,2] < [2,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(0, 2), Uint8Array.of(2, 1));
+        let expected = -1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([1,0] > [0,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(1, 0), Uint8Array.of(0, 1));
+        let expected = 1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([1,1] > [0,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(1, 1), Uint8Array.of(0, 1));
+        let expected = 1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([1,2] > [0,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(1, 2), Uint8Array.of(0, 1));
+        let expected = 1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([1,0] < [1,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(1, 0), Uint8Array.of(1, 1));
+        let expected = -1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([1,1] = [1,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(1, 1), Uint8Array.of(1, 1));
+        let expected = 0;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([1,2] > [1,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(1, 2), Uint8Array.of(1, 1));
+        let expected = 1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([1,0] < [2,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(1, 0), Uint8Array.of(2, 1));
+        let expected = -1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([1,1] < [2,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(1, 1), Uint8Array.of(2, 1));
+        let expected = -1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([1,2] < [2,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(1, 2), Uint8Array.of(2, 1));
+        let expected = -1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([2,0] > [0,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(2, 0), Uint8Array.of(0, 1));
+        let expected = 1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([2,1] > [0,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(2, 1), Uint8Array.of(0, 1));
+        let expected = 1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([2,2] > [0,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(2, 2), Uint8Array.of(0, 1));
+        let expected = 1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([2,0] > [1,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(2, 0), Uint8Array.of(1, 1));
+        let expected = 1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([2,1] > [1,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(2, 1), Uint8Array.of(1, 1));
+        let expected = 1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([2,2] > [1,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(2, 2), Uint8Array.of(1, 1));
+        let expected = 1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([2,0] < [2,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(2, 0), Uint8Array.of(2, 1));
+        let expected = -1;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([2,1] = [2,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(2, 1), Uint8Array.of(2, 1));
+        let expected = 0;
+        console.assert(observed === expected);
+    });
+    test(`It should compare chunks ([2,2] > [2,1]).`, async () => {
+        let observed = utils.Chunk.comparePrefixes(Uint8Array.of(2, 2), Uint8Array.of(2, 1));
+        let expected = 1;
         console.assert(observed === expected);
     });
     test(`It should compare chunks "bb" > "a" properly.`, async () => {
