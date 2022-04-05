@@ -54,20 +54,24 @@ export class Parser {
 
 	unsigned(length: number, endian?: "big" | "little"): number {
 		IntegerAssert.between(1, length, 6);
-		let chunk = this.chunk(length);
+		if (this.offset + length > this.buffer.length) {
+			throw `Expected to read at least ${length} bytes!`;
+		}
 		if (endian === "little") {
 			let value = 0;
 			for (let i = length - 1; i >= 0; i--) {
 				value *= 256;
-				value += chunk[i];
+				value += this.buffer[this.offset + i];
 			}
+			this.offset += length;
 			return value;
 		} else {
 			let value = 0;
 			for (let i = 0; i < length; i++) {
 				value *= 256;
-				value += chunk[i];
+				value += this.buffer[this.offset + i];
 			}
+			this.offset += length;
 			return value;
 		}
 	}
