@@ -659,7 +659,7 @@ function recordEquals(one: Record<string, any>, two: Record<string, any>): boole
 
 	test(`It should decode { key1: "a" } as object<{}> properly.`, async () => {
 		let codec = codecs.Object.of({});
-		let observed = codec.decode(Uint8Array.of(0x0A, 0x08, 0x05, 0x04, 0x6B, 0x65, 0x79, 0x31, 0x02, 0x04, 0x61, 0x62));
+		let observed = codec.decode(Uint8Array.of(0x0A, 0x08, 0x05, 0x04, 0x6B, 0x65, 0x79, 0x31, 0x02, 0x04, 0x61));
 		let expected = {
 			key1: "a"
 		};
