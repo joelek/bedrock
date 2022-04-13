@@ -1,5 +1,6 @@
 import * as utils from "./utils";
 
+type ExpansionOf<A> = A extends infer B ? { [C in keyof B]: B[C] } : never;
 type IntersectionOf<A> = (A extends any ? (_: A) => void : never) extends ((_: infer B) => void) ? B : never;
 
 export class Packet {
@@ -645,22 +646,26 @@ export const Tuple = {
 	}
 };
 
-export class ObjectCodec<V extends Record<string, any>> extends Codec<V> {
-	private codecs: CodecRecord<V>;
+export class ObjectCodec<Vreq extends Record<string, any>, Vopt extends Record<string, any> = {}> extends Codec<ExpansionOf<Vreq & Partial<Vopt>>> {
+	private required: CodecRecord<Vreq>;
+	private optional: CodecRecord<Vopt>;
 
-	constructor(codecs: CodecRecord<V>) {
+	constructor(required: CodecRecord<Vreq>, optional?: CodecRecord<Vopt>) {
 		super();
-		this.codecs = codecs;
+		this.required = required;
+		this.optional = optional ?? {} as any;
 	}
 
-	decodePayload(parser: utils.Parser | Uint8Array, path: string = ""): V {
+	decodePayload(parser: utils.Parser | Uint8Array, path: string = ""): ExpansionOf<Vreq & Partial<Vopt>> {
 		parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
 		return parser.try((parser) => {
-			let keys = new Set(globalThis.Object.keys(this.codecs));
+			let keys = new Set(globalThis.Object.keys(this.required));
 			let subject = Map.decodePayload(parser, path, (key, path, parser) => {
 				keys.delete(key);
-				if (key in this.codecs) {
-					return this.codecs[key].decode(parser, path);
+				if (key in this.required) {
+					return this.required[key].decode(parser, path);
+				} else if (key in this.optional) {
+					return this.optional[key].decode(parser, path);
 				} else {
 					return Any.decode(parser, path);
 				}
@@ -668,16 +673,18 @@ export class ObjectCodec<V extends Record<string, any>> extends Codec<V> {
 			if (keys.size !== 0) {
 				throw `Expected members ${globalThis.Array.from(keys)} to be decoded!`;
 			}
-			return subject as V;
+			return subject as ExpansionOf<Vreq & Partial<Vopt>>;
 		});
 	}
 
-	encodePayload(subject: V, path: string = ""): Uint8Array {
-		let keys = new Set(globalThis.Object.keys(this.codecs));
+	encodePayload(subject: ExpansionOf<Vreq & Partial<Vopt>>, path: string = ""): Uint8Array {
+		let keys = new Set(globalThis.Object.keys(this.required));
 		let payload = Map.encodePayload(subject, path, (key, path, subject) => {
 			keys.delete(key);
-			if (key in this.codecs) {
-				return this.codecs[key].encode(subject, path);
+			if (key in this.required) {
+				return this.required[key].encode(subject, path);
+			} else if (key in this.optional) {
+				return this.optional[key].encode(subject, path);
 			} else {
 				return Any.encode(subject, path);
 			}
@@ -690,8 +697,8 @@ export class ObjectCodec<V extends Record<string, any>> extends Codec<V> {
 };
 
 export const Object = {
-	of<V extends Record<string, any>>(codecs: CodecRecord<V>): ObjectCodec<V> {
-		return new ObjectCodec(codecs);
+	of<Vreq extends Record<string, any>, Vopt extends Record<string, any> = {}>(required: CodecRecord<Vreq>, optional?: CodecRecord<Vopt>): ObjectCodec<Vreq, Vopt> {
+		return new ObjectCodec(required, optional);
 	}
 };
 
