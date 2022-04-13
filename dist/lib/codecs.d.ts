@@ -1,4 +1,7 @@
 import * as utils from "./utils";
+declare type ExpansionOf<A> = A extends infer B ? {
+    [C in keyof B]: B[C];
+} : never;
 declare type IntersectionOf<A> = (A extends any ? (_: A) => void : never) extends ((_: infer B) => void) ? B : never;
 export declare class Packet {
     private constructor();
@@ -133,14 +136,15 @@ export declare class TupleCodec<V extends any[]> extends Codec<[...V]> {
 export declare const Tuple: {
     of<V extends any[]>(...codecs: CodecTuple<V>): TupleCodec<V>;
 };
-export declare class ObjectCodec<V extends Record<string, any>> extends Codec<V> {
-    private codecs;
-    constructor(codecs: CodecRecord<V>);
-    decodePayload(parser: utils.Parser | Uint8Array, path?: string): V;
-    encodePayload(subject: V, path?: string): Uint8Array;
+export declare class ObjectCodec<Vreq extends Record<string, any>, Vopt extends Record<string, any> = {}> extends Codec<ExpansionOf<Vreq & Partial<Vopt>>> {
+    private required;
+    private optional;
+    constructor(required: CodecRecord<Vreq>, optional?: CodecRecord<Vopt>);
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): ExpansionOf<Vreq & Partial<Vopt>>;
+    encodePayload(subject: ExpansionOf<Vreq & Partial<Vopt>>, path?: string): Uint8Array;
 }
 export declare const Object: {
-    of<V extends Record<string, any>>(codecs: CodecRecord<V>): ObjectCodec<V>;
+    of<Vreq extends Record<string, any>, Vopt extends Record<string, any> = {}>(required: CodecRecord<Vreq>, optional?: CodecRecord<Vopt> | undefined): ObjectCodec<Vreq, Vopt>;
 };
 export declare class UnionCodec<V extends any[]> extends Codec<V[number]> {
     private codecs;

@@ -617,19 +617,24 @@ exports.Tuple = {
     }
 };
 class ObjectCodec extends Codec {
-    codecs;
-    constructor(codecs) {
+    required;
+    optional;
+    constructor(required, optional) {
         super();
-        this.codecs = codecs;
+        this.required = required;
+        this.optional = optional ?? {};
     }
     decodePayload(parser, path = "") {
         parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
         return parser.try((parser) => {
-            let keys = new Set(globalThis.Object.keys(this.codecs));
+            let keys = new Set(globalThis.Object.keys(this.required));
             let subject = exports.Map.decodePayload(parser, path, (key, path, parser) => {
                 keys.delete(key);
-                if (key in this.codecs) {
-                    return this.codecs[key].decode(parser, path);
+                if (key in this.required) {
+                    return this.required[key].decode(parser, path);
+                }
+                else if (key in this.optional) {
+                    return this.optional[key].decode(parser, path);
                 }
                 else {
                     return exports.Any.decode(parser, path);
@@ -642,11 +647,14 @@ class ObjectCodec extends Codec {
         });
     }
     encodePayload(subject, path = "") {
-        let keys = new Set(globalThis.Object.keys(this.codecs));
+        let keys = new Set(globalThis.Object.keys(this.required));
         let payload = exports.Map.encodePayload(subject, path, (key, path, subject) => {
             keys.delete(key);
-            if (key in this.codecs) {
-                return this.codecs[key].encode(subject, path);
+            if (key in this.required) {
+                return this.required[key].encode(subject, path);
+            }
+            else if (key in this.optional) {
+                return this.optional[key].encode(subject, path);
             }
             else {
                 return exports.Any.encode(subject, path);
@@ -661,8 +669,8 @@ class ObjectCodec extends Codec {
 exports.ObjectCodec = ObjectCodec;
 ;
 exports.Object = {
-    of(codecs) {
-        return new ObjectCodec(codecs);
+    of(required, optional) {
+        return new ObjectCodec(required, optional);
     }
 };
 class UnionCodec extends Codec {
