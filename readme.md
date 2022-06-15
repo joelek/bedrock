@@ -32,7 +32,7 @@ Every serialization format comes with a unique set of features and is often desi
 | **Schema**         | Optional   | Optional      | Optional      | Optional   | Required      | Optional      |
 | **Sort-aware**     | No         | No            | No            | No         | No            | Yes           |
 
-* An extensible type system is needed to ensure that a specification can evolve while ensuring backwards comaptibility. Serialization formats with extensible type systems will be able to adapt as needs and requirements change.
+* An extensible type system is needed to ensure that a specification can evolve while ensuring backwards compatibility. Serialization formats with extensible type systems will be able to adapt as requirements change.
 
 * A serialization format with distinguished encoding rules specify every detail of the format so that there exists only one unique valid representation of the encoded data. Distinguished encoding rules are required for cryptographic applications.
 
@@ -44,7 +44,7 @@ Every serialization format comes with a unique set of features and is often desi
 
 * Schemas may be used to augument data for some serialization formats while others outright require them for parsing to be possible. Formats that require schemas can reduce their overhead significantly at the cost of lowering the robustness of the data stored.
 
-* Most serialization formats do not feature sort-aware serialization. Sort-aware serialization ensures that serialized data can be sorted by a generalized sorting algorithm, unaware of the type of the underlying data. This is useful for database applications.
+* Most serialization formats do not feature sort-aware serialization. Sort-aware serialization ensures that serialized data can be sorted by a generalized sorting algorithm, unaware of the structure of the underlying data. This is useful for database applications.
 
 Bedrock is a general-use serialization format with traits favoured by specialized applications.
 
