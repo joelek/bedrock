@@ -24,7 +24,7 @@ export class Packet {
 };
 
 export type CodecTuple<V extends any[]> = {
-	[K in keyof V]: V[K] extends V[number] ? Codec<V[K]> : never;
+	[K in keyof V]: Codec<V[K]>;
 };
 
 export type CodecRecord<V extends Record<string, any>> = {
