@@ -138,6 +138,7 @@ export class Chunk {
 			return Uint8Array.from(bytes);
 		}
 		if (encoding === "base64") {
+			// @ts-ignore
 			return Chunk.fromString(atob(string), "binary");
 		}
 		if (encoding === "base64url") {
@@ -169,6 +170,7 @@ export class Chunk {
 			return parts.join("");
 		}
 		if (encoding === "base64") {
+			// @ts-ignore
 			return btoa(Chunk.toString(chunk, "binary"));
 		}
 		if (encoding === "base64url") {
