@@ -9,7 +9,7 @@ export declare class Packet {
     static encode(payload: Uint8Array): Uint8Array;
 }
 export declare type CodecTuple<V extends any[]> = {
-    [K in keyof V]: V[K] extends V[number] ? Codec<V[K]> : never;
+    [K in keyof V]: Codec<V[K]>;
 };
 export declare type CodecRecord<V extends Record<string, any>> = {
     [K in keyof V]: Codec<V[K]>;
