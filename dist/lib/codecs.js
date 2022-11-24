@@ -285,7 +285,7 @@ class BinaryCodec extends Codec {
         });
     }
     encodePayload(subject, path = "") {
-        if (subject == null || subject.constructor !== globalThis.Uint8Array) {
+        if (subject == null || !(subject instanceof globalThis.Uint8Array)) {
             throw `Expected Binary at ${path}!`;
         }
         let chunks = [];
