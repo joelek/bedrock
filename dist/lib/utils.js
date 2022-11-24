@@ -11,7 +11,7 @@ class Parser {
     chunk(length) {
         length = length ?? this.buffer.length - this.offset;
         if (this.offset + length > this.buffer.length) {
-            throw `Expected to read at least ${length} bytes!`;
+            throw new Error(`Expected to read at least ${length} bytes!`);
         }
         let buffer = this.buffer.slice(this.offset, this.offset + length);
         this.offset += length;
@@ -48,12 +48,12 @@ class Parser {
                 this.offset = offset;
             }
         }
-        throw `Expected one supplier to succeed!`;
+        throw new Error(`Expected one supplier to succeed!`);
     }
     unsigned(length, endian) {
         IntegerAssert.between(1, length, 6);
         if (this.offset + length > this.buffer.length) {
-            throw `Expected to read at least ${length} bytes!`;
+            throw new Error(`Expected to read at least ${length} bytes!`);
         }
         if (endian === "little") {
             let value = 0;
@@ -83,7 +83,7 @@ class IntegerAssert {
         this.integer(min);
         this.integer(value);
         if (value < min) {
-            throw `Expected ${value} to be at least ${min}!`;
+            throw new Error(`Expected ${value} to be at least ${min}!`);
         }
         return value;
     }
@@ -91,7 +91,7 @@ class IntegerAssert {
         this.integer(value);
         this.integer(max);
         if (value > max) {
-            throw `Expected ${value} to be at most ${max}!`;
+            throw new Error(`Expected ${value} to be at most ${max}!`);
         }
         return value;
     }
@@ -100,7 +100,7 @@ class IntegerAssert {
         this.integer(value);
         this.integer(max);
         if (value < min || value > max) {
-            throw `Expected ${value} to be between ${min} and ${max}!`;
+            throw new Error(`Expected ${value} to be between ${min} and ${max}!`);
         }
         return value;
     }
@@ -108,13 +108,13 @@ class IntegerAssert {
         this.integer(expected);
         this.integer(value);
         if (value !== expected) {
-            throw `Expected ${value} to be exactly ${expected}!`;
+            throw new Error(`Expected ${value} to be exactly ${expected}!`);
         }
         return value;
     }
     static integer(value) {
         if (!Number.isInteger(value)) {
-            throw `Expected ${value} to be an integer!`;
+            throw new Error(`Expected ${value} to be an integer!`);
         }
         return value;
     }
@@ -235,7 +235,7 @@ class VarCategory {
                         return value;
                     }
                     if (i === 0 && bits === 0) {
-                        throw `Expected a distinguished encoding!`;
+                        throw new Error(`Expected a distinguished encoding!`);
                     }
                 }
                 else {
@@ -245,11 +245,11 @@ class VarCategory {
                         return value;
                     }
                     if (i === 0 && bits === 0) {
-                        throw `Expected a distinguished encoding!`;
+                        throw new Error(`Expected a distinguished encoding!`);
                     }
                 }
             }
-            throw `Expected to decode at most ${maxBytes} bytes!`;
+            throw new Error(`Expected to decode at most ${maxBytes} bytes!`);
         });
     }
     ;
@@ -277,7 +277,7 @@ class VarCategory {
             bytes[bytes.length - 1] += 64;
         }
         if (bytes.length > maxBytes) {
-            throw `Expected to encode at most ${maxBytes} bytes!`;
+            throw new Error(`Expected to encode at most ${maxBytes} bytes!`);
         }
         return Uint8Array.from(bytes);
     }
@@ -304,7 +304,7 @@ class VarInteger {
                         return value;
                     }
                     if (i === 0 && bits === 0) {
-                        throw `Expected a distinguished encoding!`;
+                        throw new Error(`Expected a distinguished encoding!`);
                     }
                 }
                 else {
@@ -314,11 +314,11 @@ class VarInteger {
                         return value;
                     }
                     if (i === 0 && bits === 0) {
-                        throw `Expected a distinguished encoding!`;
+                        throw new Error(`Expected a distinguished encoding!`);
                     }
                 }
             }
-            throw `Expected to decode at most ${maxBytes} bytes!`;
+            throw new Error(`Expected to decode at most ${maxBytes} bytes!`);
         });
     }
     ;
@@ -348,7 +348,7 @@ class VarInteger {
             bytes[bytes.length - 1] += 64;
         }
         if (bytes.length > maxBytes) {
-            throw `Expected to encode at most ${maxBytes} bytes!`;
+            throw new Error(`Expected to encode at most ${maxBytes} bytes!`);
         }
         return Uint8Array.from(bytes);
     }
@@ -371,10 +371,10 @@ class VarLength {
                     return value;
                 }
                 if (i === 0 && bits === 0) {
-                    throw `Expected a distinguished encoding!`;
+                    throw new Error(`Expected a distinguished encoding!`);
                 }
             }
-            throw `Expected to decode at most ${maxBytes} bytes!`;
+            throw new Error(`Expected to decode at most ${maxBytes} bytes!`);
         });
     }
     ;
@@ -391,7 +391,7 @@ class VarLength {
             bytes[i] += 128;
         }
         if (bytes.length > maxBytes) {
-            throw `Expected to encode at most ${maxBytes} bytes!`;
+            throw new Error(`Expected to encode at most ${maxBytes} bytes!`);
         }
         return Uint8Array.from(bytes);
     }
