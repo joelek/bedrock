@@ -26,7 +26,7 @@ Every serialization format comes with a unique set of features and is often desi
 | ------------------ | ---------- | ------------- | ------------- | ---------- | ------------- | ------------- |
 | **Type system**    | Fixed      | :sweat_smile: | Extensible    | Extensible | Extensible    | Extensible    |
 | **Encoding rules** | Flexible   | Flexible      | Distinguished | Flexible   | Flexible      | Distinguished |
-| **Overhead**       | Medium     | High          | Low           | Low        | Low           | Medium        |
+| **Data Overhead**  | Medium     | High          | Low           | Low        | Low           | Medium        |
 | **Complexity**     | Low        | Low           | High          | High       | High          | High          |
 | **Segmentation**   | Delimiters | Delimiters    | Prefix        | Prefix     | Prefix        | Prefix        |
 | **Schema**         | Optional   | Optional      | Optional      | Optional   | Required      | Optional      |
@@ -36,7 +36,7 @@ Every serialization format comes with a unique set of features and is often desi
 
 * A serialization format with distinguished encoding rules specify every detail of the format so that there exists only one unique valid representation of the encoded data. Distinguished encoding rules are required for cryptographic applications.
 
-* All serialization formats contain some amount of overhead. The overhead needs to be balanced against the features provided by the format but should generally be kept to a minimum.
+* All serialization formats contain some amount of data overhead. The overhead needs to be balanced against the features provided by the format but should generally be kept to a minimum.
 
 * Different serialization formats have different complexity. Low complexity is generally favourable as low-complexity formats will gain adoption more easily. High-complexity formats will generally include more advanced features.
 
