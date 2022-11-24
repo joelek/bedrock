@@ -300,7 +300,7 @@ export class BinaryCodec extends Codec<Uint8Array> {
 	}
 
 	encodePayload(subject: Uint8Array, path: string = ""): Uint8Array {
-		if (subject == null || subject.constructor !== globalThis.Uint8Array) {
+		if (subject == null || !(subject instanceof globalThis.Uint8Array)) {
 			throw `Expected Binary at ${path}!`;
 		}
 		let chunks = [] as Array<Uint8Array>;
