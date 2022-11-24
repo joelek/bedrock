@@ -113,7 +113,7 @@ export class AnyCodec extends Codec<any> {
 		try {
 			return Unknown.encodePayload(subject, path);
 		} catch (error) {}
-		throw `Expected subject to be encodable!`;
+		throw new Error(`Expected subject to be encodable!`);
 	}
 };
 
@@ -128,7 +128,7 @@ export class NullCodec extends Codec<null> {
 		parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
 		return parser.try((parser) => {
 			if (parser.unsigned(1) !== Tag.NULL) {
-				throw `Expected Null at ${path}!`;
+				throw new Error(`Expected Null at ${path}!`);
 			}
 			return null;
 		});
@@ -136,7 +136,7 @@ export class NullCodec extends Codec<null> {
 
 	encodePayload(subject: null, path: string = ""): Uint8Array {
 		if (subject !== null) {
-			throw `Expected Null at ${path}!`;
+			throw new Error(`Expected Null at ${path}!`);
 		}
 		let chunks = [] as Array<Uint8Array>;
 		chunks.push(Uint8Array.of(Tag.NULL));
@@ -155,7 +155,7 @@ export class FalseCodec extends Codec<false> {
 		parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
 		return parser.try((parser) => {
 			if (parser.unsigned(1) !== Tag.FALSE) {
-				throw `Expected False at ${path}!`;
+				throw new Error(`Expected False at ${path}!`);
 			}
 			return false;
 		});
@@ -163,7 +163,7 @@ export class FalseCodec extends Codec<false> {
 
 	encodePayload(subject: false, path: string = ""): Uint8Array {
 		if (subject !== false) {
-			throw `Expected False at ${path}!`;
+			throw new Error(`Expected False at ${path}!`);
 		}
 		let chunks = [] as Array<Uint8Array>;
 		chunks.push(Uint8Array.of(Tag.FALSE));
@@ -182,7 +182,7 @@ export class TrueCodec extends Codec<true> {
 		parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
 		return parser.try((parser) => {
 			if (parser.unsigned(1) !== Tag.TRUE) {
-				throw `Expected True at ${path}!`;
+				throw new Error(`Expected True at ${path}!`);
 			}
 			return true;
 		});
@@ -190,7 +190,7 @@ export class TrueCodec extends Codec<true> {
 
 	encodePayload(subject: true, path: string = ""): Uint8Array {
 		if (subject !== true) {
-			throw `Expected True at ${path}!`;
+			throw new Error(`Expected True at ${path}!`);
 		}
 		let chunks = [] as Array<Uint8Array>;
 		chunks.push(Uint8Array.of(Tag.TRUE));
@@ -209,7 +209,7 @@ export class NumberCodec extends Codec<number> {
 		parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
 		return parser.try((parser) => {
 			if (parser.unsigned(1) !== Tag.NUMBER) {
-				throw `Expected Number at ${path}!`;
+				throw new Error(`Expected Number at ${path}!`);
 			}
 			let chunk = parser.chunk(8);
 			if (((chunk[0] >> 7) & 0x01) === 0x01) {
@@ -230,7 +230,7 @@ export class NumberCodec extends Codec<number> {
 
 	encodePayload(subject: number, path: string = ""): Uint8Array {
 		if (subject == null || subject.constructor !== globalThis.Number) {
-			throw `Expected Number at ${path}!`;
+			throw new Error(`Expected Number at ${path}!`);
 		}
 		let chunks = [] as Array<Uint8Array>;
 		chunks.push(Uint8Array.of(Tag.NUMBER));
@@ -263,7 +263,7 @@ export class StringCodec extends Codec<string> {
 		parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
 		return parser.try((parser) => {
 			if (parser.unsigned(1) !== Tag.STRING) {
-				throw `Expected String at ${path}!`;
+				throw new Error(`Expected String at ${path}!`);
 			}
 			let value = utils.Chunk.toString(parser.chunk(), "utf-8");
 			return value;
@@ -272,7 +272,7 @@ export class StringCodec extends Codec<string> {
 
 	encodePayload(subject: string, path: string = ""): Uint8Array {
 		if (subject == null || subject.constructor !== globalThis.String) {
-			throw `Expected String at ${path}!`;
+			throw new Error(`Expected String at ${path}!`);
 		}
 		let chunks = [] as Array<Uint8Array>;
 		chunks.push(Uint8Array.of(Tag.STRING));
@@ -292,7 +292,7 @@ export class BinaryCodec extends Codec<Uint8Array> {
 		parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
 		return parser.try((parser) => {
 			if (parser.unsigned(1) !== Tag.BINARY) {
-				throw `Expected Binary at ${path}!`;
+				throw new Error(`Expected Binary at ${path}!`);
 			}
 			let value = parser.chunk();
 			return value;
@@ -301,7 +301,7 @@ export class BinaryCodec extends Codec<Uint8Array> {
 
 	encodePayload(subject: Uint8Array, path: string = ""): Uint8Array {
 		if (subject == null || !(subject instanceof globalThis.Uint8Array)) {
-			throw `Expected Binary at ${path}!`;
+			throw new Error(`Expected Binary at ${path}!`);
 		}
 		let chunks = [] as Array<Uint8Array>;
 		chunks.push(Uint8Array.of(Tag.BINARY));
@@ -321,7 +321,7 @@ export class BigIntCodec extends Codec<bigint> {
 		parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
 		return parser.try((parser) => {
 			if (parser.unsigned(1) !== Tag.BIGINT) {
-				throw `Expected BigInt at ${path}!`;
+				throw new Error(`Expected BigInt at ${path}!`);
 			}
 			let category = utils.VarCategory.decode(parser);
 			let value = 0n;
@@ -348,7 +348,7 @@ export class BigIntCodec extends Codec<bigint> {
 
 	encodePayload(subject: bigint, path: string = ""): Uint8Array {
 		if (subject == null || subject.constructor !== globalThis.BigInt) {
-			throw `Expected BigInt at ${path}!`;
+			throw new Error(`Expected BigInt at ${path}!`);
 		}
 		let chunks = [] as Array<Uint8Array>;
 		chunks.push(Uint8Array.of(Tag.BIGINT));
@@ -390,7 +390,7 @@ export class ListCodec extends Codec<Array<any>> {
 		parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
 		return parser.try((parser) => {
 			if (parser.unsigned(1) !== Tag.LIST) {
-				throw `Expected List at ${path}!`;
+				throw new Error(`Expected List at ${path}!`);
 			}
 			decode = decode ?? ((key, path, parser) => Any.decode(parser, path));
 			let value = [] as Array<any>;
@@ -406,7 +406,7 @@ export class ListCodec extends Codec<Array<any>> {
 
 	encodePayload(subject: Array<any>, path: string = "", encode?: (index: number, path: string, subject: any) => Uint8Array): Uint8Array {
 		if (subject == null || subject.constructor !== globalThis.Array) {
-			throw `Expected List at ${path}!`;
+			throw new Error(`Expected List at ${path}!`);
 		}
 		encode = encode ?? ((key, path, subject) => Any.encode(subject, path));
 		let chunks = [] as Array<Uint8Array>;
@@ -434,7 +434,7 @@ export class MapCodec extends Codec<Record<string, any>> {
 		parser = parser instanceof utils.Parser ? parser : new utils.Parser(parser);
 		return parser.try((parser) => {
 			if (parser.unsigned(1) !== Tag.MAP) {
-				throw `Expected Map at ${path}!`;
+				throw new Error(`Expected Map at ${path}!`);
 			}
 			decode = decode ?? ((key, path, parser) => Any.decode(parser, path));
 			let value = {} as Record<string, any>;
@@ -449,7 +449,7 @@ export class MapCodec extends Codec<Record<string, any>> {
 
 	encodePayload(subject: Record<string, any>, path: string = "", encode?: (key: string, path: string, subject: any) => Uint8Array): Uint8Array {
 		if (subject == null || subject.constructor !== globalThis.Object) {
-			throw `Expected Map at ${path}!`;
+			throw new Error(`Expected Map at ${path}!`);
 		}
 		encode = encode ?? ((key, path, subject) => Any.encode(subject, path));
 		let chunks = [] as Array<Uint8Array>;
@@ -483,7 +483,7 @@ export class UnknownValue {
 	constructor(chunk: Uint8Array) {
 		utils.IntegerAssert.atLeast(1, chunk.length);
 		if (chunk[0] in Tag) {
-			throw `Expected tag ${Tag[chunk[0]]} to be unknown!`;
+			throw new Error(`Expected tag ${Tag[chunk[0]]} to be unknown!`);
 		}
 		this.chunk = chunk;
 	}
@@ -508,7 +508,7 @@ export class UnknownCodec extends Codec<UnknownValue> {
 
 	encodePayload(subject: UnknownValue, path: string = ""): Uint8Array {
 		if (subject == null || subject.constructor !== UnknownValue) {
-			throw `Expected Unknown at ${path}!`;
+			throw new Error(`Expected Unknown at ${path}!`);
 		}
 		let chunks = [] as Array<Uint8Array>;
 		chunks.push(subject.getChunk());
@@ -617,7 +617,7 @@ export class TupleCodec<V extends any[]> extends Codec<[...V]> {
 				}
 			});
 			if (indices.size !== 0) {
-				throw `Expected members ${globalThis.Array.from(indices)} to be decoded!`;
+				throw new Error(`Expected members ${globalThis.Array.from(indices)} to be decoded!`);
 			}
 			return subject as [...V];
 		});
@@ -634,7 +634,7 @@ export class TupleCodec<V extends any[]> extends Codec<[...V]> {
 			}
 		});
 		if (indices.size !== 0) {
-			throw `Expected members ${globalThis.Array.from(indices)} to be encoded!`;
+			throw new Error(`Expected members ${globalThis.Array.from(indices)} to be encoded!`);
 		}
 		return payload;
 	}
@@ -671,7 +671,7 @@ export class ObjectCodec<Vreq extends Record<string, any>, Vopt extends Record<s
 				}
 			});
 			if (keys.size !== 0) {
-				throw `Expected members ${globalThis.Array.from(keys)} to be decoded!`;
+				throw new Error(`Expected members ${globalThis.Array.from(keys)} to be decoded!`);
 			}
 			return subject as ExpansionOf<Vreq & Partial<Vopt>>;
 		});
@@ -690,7 +690,7 @@ export class ObjectCodec<Vreq extends Record<string, any>, Vopt extends Record<s
 			}
 		});
 		if (keys.size !== 0) {
-			throw `Expected members ${globalThis.Array.from(keys)} to be encoded!`;
+			throw new Error(`Expected members ${globalThis.Array.from(keys)} to be encoded!`);
 		}
 		return payload;
 	}
@@ -716,7 +716,7 @@ export class UnionCodec<V extends any[]> extends Codec<V[number]> {
 				return codec.decodePayload(parser, path);
 			} catch (error) {}
 		}
-		throw `Expected subject to be decodable!`;
+		throw new Error(`Expected subject to be decodable!`);
 	}
 
 	encodePayload(subject: V[number], path: string = ""): Uint8Array {
@@ -725,7 +725,7 @@ export class UnionCodec<V extends any[]> extends Codec<V[number]> {
 				return codec.encodePayload(subject, path);
 			} catch (error) {}
 		}
-		throw `Expected subject to be encodable!`;
+		throw new Error(`Expected subject to be encodable!`);
 	}
 };
 
@@ -772,10 +772,10 @@ export class IntegerCodec extends Codec<number> {
 	decodePayload(parser: utils.Parser | Uint8Array, path: string = ""): number {
 		let subject = BigInt.decodePayload(parser, path);
 		if (subject < globalThis.BigInt(globalThis.Number.MIN_SAFE_INTEGER)) {
-			throw `Expected ${subject} at ${path} to be within safe range!`;
+			throw new Error(`Expected ${subject} at ${path} to be within safe range!`);
 		}
 		if (subject > globalThis.BigInt(globalThis.Number.MAX_SAFE_INTEGER)) {
-			throw `Expected ${subject} at ${path} to be within safe range!`;
+			throw new Error(`Expected ${subject} at ${path} to be within safe range!`);
 		}
 		return globalThis.Number(subject);
 	}
@@ -798,14 +798,14 @@ export class StringLiteralCodec<V extends string> extends Codec<V> {
 	decodePayload(parser: utils.Parser | Uint8Array, path: string = ""): V {
 		let subject = String.decodePayload(parser, path);
 		if (subject !== this.value) {
-			throw `Expected "${this.value}" at ${path}!`;
+			throw new Error(`Expected "${this.value}" at ${path}!`);
 		}
 		return this.value;
 	}
 
 	encodePayload(subject: V, path: string = ""): Uint8Array {
 		if (subject !== this.value) {
-			throw `Expected "${this.value}" at ${path}!`;
+			throw new Error(`Expected "${this.value}" at ${path}!`);
 		}
 		return String.encodePayload(subject, path);
 	}
@@ -828,14 +828,14 @@ export class NumberLiteralCodec<V extends number> extends Codec<V> {
 	decodePayload(parser: utils.Parser | Uint8Array, path: string = ""): V {
 		let subject = Number.decodePayload(parser, path);
 		if (subject !== this.value) {
-			throw `Expected ${this.value} at ${path}!`;
+			throw new Error(`Expected ${this.value} at ${path}!`);
 		}
 		return this.value;
 	}
 
 	encodePayload(subject: V, path: string = ""): Uint8Array {
 		if (subject !== this.value) {
-			throw `Expected ${this.value} at ${path}!`;
+			throw new Error(`Expected ${this.value} at ${path}!`);
 		}
 		return Number.encodePayload(subject, path);
 	}
@@ -858,14 +858,14 @@ export class BigIntLiteralCodec<V extends bigint> extends Codec<V> {
 	decodePayload(parser: utils.Parser | Uint8Array, path: string = ""): V {
 		let subject = BigInt.decodePayload(parser, path);
 		if (subject !== this.value) {
-			throw `Expected ${this.value} at ${path}!`;
+			throw new Error(`Expected ${this.value} at ${path}!`);
 		}
 		return this.value;
 	}
 
 	encodePayload(subject: V, path: string = ""): Uint8Array {
 		if (subject !== this.value) {
-			throw `Expected ${this.value} at ${path}!`;
+			throw new Error(`Expected ${this.value} at ${path}!`);
 		}
 		return BigInt.encodePayload(subject, path);
 	}
@@ -888,14 +888,14 @@ export class BooleanLiteralCodec<V extends boolean> extends Codec<V> {
 	decodePayload(parser: utils.Parser | Uint8Array, path: string = ""): V {
 		let subject = Boolean.decodePayload(parser, path);
 		if (subject !== this.value) {
-			throw `Expected ${this.value} at ${path}!`;
+			throw new Error(`Expected ${this.value} at ${path}!`);
 		}
 		return this.value;
 	}
 
 	encodePayload(subject: V, path: string = ""): Uint8Array {
 		if (subject !== this.value) {
-			throw `Expected ${this.value} at ${path}!`;
+			throw new Error(`Expected ${this.value} at ${path}!`);
 		}
 		return Boolean.encodePayload(subject, path);
 	}
@@ -918,14 +918,14 @@ export class IntegerLiteralCodec<V extends number> extends Codec<V> {
 	decodePayload(parser: utils.Parser | Uint8Array, path: string = ""): V {
 		let subject = Integer.decodePayload(parser, path);
 		if (subject !== this.value) {
-			throw `Expected ${this.value} at ${path}!`;
+			throw new Error(`Expected ${this.value} at ${path}!`);
 		}
 		return this.value;
 	}
 
 	encodePayload(subject: V, path: string = ""): Uint8Array {
 		if (subject !== this.value) {
-			throw `Expected ${this.value} at ${path}!`;
+			throw new Error(`Expected ${this.value} at ${path}!`);
 		}
 		return Integer.encodePayload(subject, path);
 	}
