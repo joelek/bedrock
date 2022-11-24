@@ -26,7 +26,7 @@ Every serialization format comes with a unique set of features and is often desi
 | ------------------ | ---------- | ------------- | ------------- | ---------- | ------------- | ------------- |
 | **Type system**    | Fixed      | :sweat_smile: | Extensible    | Extensible | Extensible    | Extensible    |
 | **Encoding rules** | Flexible   | Flexible      | Distinguished | Flexible   | Flexible      | Distinguished |
-| **Data Overhead**  | Medium     | High          | Low           | Low        | Low           | Medium        |
+| **Data overhead**  | Medium     | High          | Low           | Low        | Low           | Medium        |
 | **Complexity**     | Low        | Low           | High          | High       | High          | High          |
 | **Segmentation**   | Delimiters | Delimiters    | Prefix        | Prefix     | Prefix        | Prefix        |
 | **Schema**         | Optional   | Optional      | Optional      | Optional   | Required      | Optional      |
