@@ -1,9 +1,6 @@
 {
 	"compilerOptions": {
-		"declaration": true,
-		"lib": [
-			"esnext"
-		],
+		"composite": true,
 		"module": "commonjs",
 		"outDir": "./build/",
 		"resolveJsonModule": true,
