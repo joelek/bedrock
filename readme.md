@@ -310,5 +310,3 @@ npm install joelek/bedrock#master
 NB: This project targets TypeScript 4 in strict mode.
 
 ## Roadmap
-
-* Move common functionality to stdlib.
