@@ -1,225 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VarLength = exports.VarInteger = exports.VarCategory = exports.Chunk = exports.IntegerAssert = exports.Parser = void 0;
-class Parser {
-    buffer;
-    offset;
-    constructor(buffer, offset) {
-        this.buffer = buffer;
-        this.offset = offset ?? 0;
-    }
-    chunk(length) {
-        length = length ?? this.buffer.length - this.offset;
-        if (this.offset + length > this.buffer.length) {
-            throw new Error(`Expected to read at least ${length} bytes!`);
-        }
-        let buffer = this.buffer.slice(this.offset, this.offset + length);
-        this.offset += length;
-        return buffer;
-    }
-    eof() {
-        return this.offset >= this.buffer.length;
-    }
-    signed(length, endian) {
-        let value = this.unsigned(length, endian);
-        let bias = 2 ** (length * 8 - 1);
-        if (value >= bias) {
-            value -= bias + bias;
-        }
-        return value;
-    }
-    try(supplier) {
-        let offset = this.offset;
-        try {
-            return supplier(this);
-        }
-        catch (error) {
-            this.offset = offset;
-            throw error;
-        }
-    }
-    tryArray(suppliers) {
-        let offset = this.offset;
-        for (let supplier of suppliers) {
-            try {
-                return supplier(this);
-            }
-            catch (error) {
-                this.offset = offset;
-            }
-        }
-        throw new Error(`Expected one supplier to succeed!`);
-    }
-    unsigned(length, endian) {
-        IntegerAssert.between(1, length, 6);
-        if (this.offset + length > this.buffer.length) {
-            throw new Error(`Expected to read at least ${length} bytes!`);
-        }
-        if (endian === "little") {
-            let value = 0;
-            for (let i = length - 1; i >= 0; i--) {
-                value *= 256;
-                value += this.buffer[this.offset + i];
-            }
-            this.offset += length;
-            return value;
-        }
-        else {
-            let value = 0;
-            for (let i = 0; i < length; i++) {
-                value *= 256;
-                value += this.buffer[this.offset + i];
-            }
-            this.offset += length;
-            return value;
-        }
-    }
-}
-exports.Parser = Parser;
-;
-class IntegerAssert {
-    constructor() { }
-    static atLeast(min, value) {
-        this.integer(min);
-        this.integer(value);
-        if (value < min) {
-            throw new Error(`Expected ${value} to be at least ${min}!`);
-        }
-        return value;
-    }
-    static atMost(max, value) {
-        this.integer(value);
-        this.integer(max);
-        if (value > max) {
-            throw new Error(`Expected ${value} to be at most ${max}!`);
-        }
-        return value;
-    }
-    static between(min, value, max) {
-        this.integer(min);
-        this.integer(value);
-        this.integer(max);
-        if (value < min || value > max) {
-            throw new Error(`Expected ${value} to be between ${min} and ${max}!`);
-        }
-        return value;
-    }
-    static exactly(value, expected) {
-        this.integer(expected);
-        this.integer(value);
-        if (value !== expected) {
-            throw new Error(`Expected ${value} to be exactly ${expected}!`);
-        }
-        return value;
-    }
-    static integer(value) {
-        if (!Number.isInteger(value)) {
-            throw new Error(`Expected ${value} to be an integer!`);
-        }
-        return value;
-    }
-}
-exports.IntegerAssert = IntegerAssert;
-;
-class Chunk {
-    constructor() { }
-    static fromString(string, encoding) {
-        if (encoding === "binary") {
-            let bytes = new Array();
-            for (let i = 0; i < string.length; i += 1) {
-                let byte = string.charCodeAt(i);
-                bytes.push(byte);
-            }
-            return Uint8Array.from(bytes);
-        }
-        if (encoding === "base64") {
-            // @ts-ignore
-            return Chunk.fromString(atob(string), "binary");
-        }
-        if (encoding === "base64url") {
-            return Chunk.fromString(string.replaceAll("-", "+").replaceAll("_", "/"), "base64");
-        }
-        if (encoding === "hex") {
-            if (string.length % 2 === 1) {
-                string = `0${string}`;
-            }
-            let bytes = new Array();
-            for (let i = 0; i < string.length; i += 2) {
-                let part = string.slice(i, i + 2);
-                let byte = Number.parseInt(part, 16);
-                bytes.push(byte);
-            }
-            return Uint8Array.from(bytes);
-        }
-        // @ts-ignore
-        return new TextEncoder().encode(string);
-    }
-    static toString(chunk, encoding) {
-        if (encoding === "binary") {
-            let parts = new Array();
-            for (let byte of chunk) {
-                let part = String.fromCharCode(byte);
-                parts.push(part);
-            }
-            return parts.join("");
-        }
-        if (encoding === "base64") {
-            // @ts-ignore
-            return btoa(Chunk.toString(chunk, "binary"));
-        }
-        if (encoding === "base64url") {
-            return Chunk.toString(chunk, "base64").replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
-        }
-        if (encoding === "hex") {
-            let parts = new Array();
-            for (let byte of chunk) {
-                let part = byte.toString(16).toUpperCase().padStart(2, "0");
-                parts.push(part);
-            }
-            return parts.join("");
-        }
-        // @ts-ignore
-        return new TextDecoder().decode(chunk);
-    }
-    static equals(one, two) {
-        return this.comparePrefixes(one, two) === 0;
-    }
-    static comparePrefixes(one, two) {
-        for (let i = 0; i < Math.min(one.length, two.length); i++) {
-            let a = one[i];
-            let b = two[i];
-            if (a < b) {
-                return -1;
-            }
-            if (a > b) {
-                return 1;
-            }
-        }
-        if (one.length < two.length) {
-            return -1;
-        }
-        if (one.length > two.length) {
-            return 1;
-        }
-        return 0;
-    }
-    static concat(buffers) {
-        let length = buffers.reduce((sum, buffer) => sum + buffer.length, 0);
-        let result = new Uint8Array(length);
-        let offset = 0;
-        for (let buffer of buffers) {
-            result.set(buffer, offset);
-            offset += buffer.length;
-        }
-        return result;
-    }
-}
-exports.Chunk = Chunk;
-;
+exports.VarLength = exports.VarInteger = exports.VarCategory = exports.Parser = exports.Chunk = exports.IntegerAssert = void 0;
+const integer_1 = require("@joelek/ts-stdlib/dist/lib/asserts/integer");
+const parser_1 = require("@joelek/ts-stdlib/dist/lib/data/parser");
+var integer_2 = require("@joelek/ts-stdlib/dist/lib/asserts/integer");
+Object.defineProperty(exports, "IntegerAssert", { enumerable: true, get: function () { return integer_2.IntegerAssert; } });
+var chunk_1 = require("@joelek/ts-stdlib/dist/lib/data/chunk");
+Object.defineProperty(exports, "Chunk", { enumerable: true, get: function () { return chunk_1.Chunk; } });
+var parser_2 = require("@joelek/ts-stdlib/dist/lib/data/parser");
+Object.defineProperty(exports, "Parser", { enumerable: true, get: function () { return parser_2.Parser; } });
 class VarCategory {
     constructor() { }
     static decode(parser, maxBytes = 8) {
-        parser = parser instanceof Parser ? parser : new Parser(parser);
+        parser = parser instanceof parser_1.Parser ? parser : new parser_1.Parser(parser);
         return parser.try((parser) => {
             let value = 0;
             for (let i = 0; i < maxBytes; i++) {
@@ -254,7 +47,7 @@ class VarCategory {
     }
     ;
     static encode(value, maxBytes = 8) {
-        IntegerAssert.integer(value);
+        integer_1.IntegerAssert.integer(value);
         let bytes = new Array();
         if (value >= 0) {
             do {
@@ -288,7 +81,7 @@ exports.VarCategory = VarCategory;
 class VarInteger {
     constructor() { }
     static decode(parser, maxBytes = 8) {
-        parser = parser instanceof Parser ? parser : new Parser(parser);
+        parser = parser instanceof parser_1.Parser ? parser : new parser_1.Parser(parser);
         return parser.try((parser) => {
             let value = 0;
             for (let i = 0; i < maxBytes; i++) {
@@ -323,7 +116,7 @@ class VarInteger {
     }
     ;
     static encode(value, maxBytes = 8) {
-        IntegerAssert.integer(value);
+        integer_1.IntegerAssert.integer(value);
         let bytes = new Array();
         if (value >= 0) {
             do {
@@ -359,7 +152,7 @@ exports.VarInteger = VarInteger;
 class VarLength {
     constructor() { }
     static decode(parser, maxBytes = 8) {
-        parser = parser instanceof Parser ? parser : new Parser(parser);
+        parser = parser instanceof parser_1.Parser ? parser : new parser_1.Parser(parser);
         return parser.try((parser) => {
             let value = 0;
             for (let i = 0; i < maxBytes; i++) {
@@ -379,7 +172,7 @@ class VarLength {
     }
     ;
     static encode(value, maxBytes = 8) {
-        IntegerAssert.atLeast(0, value);
+        integer_1.IntegerAssert.atLeast(0, value);
         let bytes = new Array();
         do {
             let bits = value % 128;
