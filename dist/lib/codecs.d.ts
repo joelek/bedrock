@@ -1,17 +1,17 @@
 import * as utils from "./utils";
-declare type ExpansionOf<A> = A extends infer B ? {
+type ExpansionOf<A> = A extends infer B ? {
     [C in keyof B]: B[C];
 } : never;
-declare type IntersectionOf<A> = (A extends any ? (_: A) => void : never) extends ((_: infer B) => void) ? B : never;
+type IntersectionOf<A> = (A extends any ? (_: A) => void : never) extends ((_: infer B) => void) ? B : never;
 export declare class Packet {
     private constructor();
     static decode(parser: utils.Parser | Uint8Array): Uint8Array;
     static encode(payload: Uint8Array): Uint8Array;
 }
-export declare type CodecTuple<V extends any[]> = {
+export type CodecTuple<V extends any[]> = {
     [K in keyof V]: Codec<V[K]>;
 };
-export declare type CodecRecord<V extends Record<string, any>> = {
+export type CodecRecord<V extends Record<string, any>> = {
     [K in keyof V]: Codec<V[K]>;
 };
 export declare enum Tag {
