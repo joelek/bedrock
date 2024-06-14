@@ -154,7 +154,7 @@ Please note that all examples display payload data and not packetized data. Pack
 
 ### Null
 
-The Null type is used to represent the absence of a value. Null types are encoded using the tag `00` do not encode additional payload data.
+The Null type is used to represent the absence of a value. Null types are encoded using the tag `00` and do not encode additional payload data.
 
 <pre>
 00 (null)
