@@ -1,7 +1,7 @@
-import { Parser } from "@joelek/ts-stdlib/dist/lib/data/parser";
-export { IntegerAssert } from "@joelek/ts-stdlib/dist/lib/asserts/integer";
-export { Chunk } from "@joelek/ts-stdlib/dist/lib/data/chunk";
-export { Parser } from "@joelek/ts-stdlib/dist/lib/data/parser";
+import { Parser } from "@joelek/stdlib/dist/lib/data/parser";
+export { IntegerAssert } from "@joelek/stdlib/dist/lib/asserts/integer";
+export { Chunk } from "@joelek/stdlib/dist/lib/data/chunk";
+export { Parser } from "@joelek/stdlib/dist/lib/data/parser";
 export declare class VarCategory {
     private constructor();
     static decode(parser: Parser | Uint8Array, maxBytes?: number): number;

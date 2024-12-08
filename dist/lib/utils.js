@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VarLength = exports.VarInteger = exports.VarCategory = exports.Parser = exports.Chunk = exports.IntegerAssert = void 0;
-const integer_1 = require("@joelek/ts-stdlib/dist/lib/asserts/integer");
-const parser_1 = require("@joelek/ts-stdlib/dist/lib/data/parser");
-var integer_2 = require("@joelek/ts-stdlib/dist/lib/asserts/integer");
+const integer_1 = require("@joelek/stdlib/dist/lib/asserts/integer");
+const parser_1 = require("@joelek/stdlib/dist/lib/data/parser");
+var integer_2 = require("@joelek/stdlib/dist/lib/asserts/integer");
 Object.defineProperty(exports, "IntegerAssert", { enumerable: true, get: function () { return integer_2.IntegerAssert; } });
-var chunk_1 = require("@joelek/ts-stdlib/dist/lib/data/chunk");
+var chunk_1 = require("@joelek/stdlib/dist/lib/data/chunk");
 Object.defineProperty(exports, "Chunk", { enumerable: true, get: function () { return chunk_1.Chunk; } });
-var parser_2 = require("@joelek/ts-stdlib/dist/lib/data/parser");
+var parser_2 = require("@joelek/stdlib/dist/lib/data/parser");
 Object.defineProperty(exports, "Parser", { enumerable: true, get: function () { return parser_2.Parser; } });
 class VarCategory {
     constructor() { }
