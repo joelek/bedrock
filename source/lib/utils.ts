@@ -1,10 +1,10 @@
-import { IntegerAssert } from "@joelek/ts-stdlib/dist/lib/asserts/integer";
-import { Chunk } from "@joelek/ts-stdlib/dist/lib/data/chunk";
-import { Parser } from "@joelek/ts-stdlib/dist/lib/data/parser";
+import { IntegerAssert } from "@joelek/stdlib/dist/lib/asserts/integer";
+import { Chunk } from "@joelek/stdlib/dist/lib/data/chunk";
+import { Parser } from "@joelek/stdlib/dist/lib/data/parser";
 
-export { IntegerAssert } from "@joelek/ts-stdlib/dist/lib/asserts/integer";
-export { Chunk } from "@joelek/ts-stdlib/dist/lib/data/chunk";
-export { Parser } from "@joelek/ts-stdlib/dist/lib/data/parser";
+export { IntegerAssert } from "@joelek/stdlib/dist/lib/asserts/integer";
+export { Chunk } from "@joelek/stdlib/dist/lib/data/chunk";
+export { Parser } from "@joelek/stdlib/dist/lib/data/parser";
 
 export class VarCategory {
 	private constructor() {}
