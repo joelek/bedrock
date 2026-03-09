@@ -936,3 +936,20 @@ export const IntegerLiteral = {
 		return new IntegerLiteralCodec(value);
 	}
 };
+
+export class DateCodec extends Codec<Date> {
+	constructor() {
+		super();
+	}
+
+	decodePayload(parser: utils.Parser | Uint8Array, path: string = ""): Date {
+		let subject = Integer.decodePayload(parser, path);
+		return new globalThis.Date(subject);
+	}
+
+	encodePayload(subject: Date, path: string = ""): Uint8Array {
+		return Integer.encodePayload(subject.getTime(), path);
+	}
+};
+
+export const Date = new DateCodec();
