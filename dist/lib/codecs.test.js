@@ -793,3 +793,13 @@ wtf.test(`It should decode 0 as integer properly.`, async (assert) => {
     let expected = 0;
     assert.equals(observed, expected);
 });
+wtf.test(`It should encode date "1970-01-01T00:00:00Z" properly.`, async (assert) => {
+    let observed = codecs.Date.encode(new Date("1970-01-01T00:00:00Z"));
+    let expected = Uint8Array.of(0x03, 0x06, 0x80, 0x00);
+    assert.equals(observed, expected);
+});
+wtf.test(`It should decode date "1970-01-01T00:00:00Z" properly.`, async (assert) => {
+    let observed = codecs.Date.decode(Uint8Array.of(0x03, 0x06, 0x80, 0x00));
+    let expected = new Date("1970-01-01T00:00:00Z");
+    assert.equals(observed, expected);
+});

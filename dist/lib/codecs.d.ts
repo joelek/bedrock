@@ -215,4 +215,10 @@ export declare class IntegerLiteralCodec<V extends number> extends Codec<V> {
 export declare const IntegerLiteral: {
     of<V extends number>(value: V): IntegerLiteralCodec<V>;
 };
+export declare class DateCodec extends Codec<Date> {
+    constructor();
+    decodePayload(parser: utils.Parser | Uint8Array, path?: string): Date;
+    encodePayload(subject: Date, path?: string): Uint8Array;
+}
+export declare const Date: DateCodec;
 export {};

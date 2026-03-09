@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BooleanLiteral = exports.BooleanLiteralCodec = exports.BigIntLiteral = exports.BigIntLiteralCodec = exports.NumberLiteral = exports.NumberLiteralCodec = exports.StringLiteral = exports.StringLiteralCodec = exports.Integer = exports.IntegerCodec = exports.Intersection = exports.IntersectionCodec = exports.Union = exports.UnionCodec = exports.Object = exports.ObjectCodec = exports.Tuple = exports.TupleCodec = exports.Record = exports.RecordCodec = exports.Array = exports.ArrayCodec = exports.Boolean = exports.BooleanCodec = exports.Unknown = exports.UnknownCodec = exports.UnknownValue = exports.Map = exports.MapCodec = exports.List = exports.ListCodec = exports.BigInt = exports.BigIntCodec = exports.Binary = exports.BinaryCodec = exports.String = exports.StringCodec = exports.Number = exports.NumberCodec = exports.True = exports.TrueCodec = exports.False = exports.FalseCodec = exports.Null = exports.NullCodec = exports.Any = exports.AnyCodec = exports.Codec = exports.Tag = exports.Packet = void 0;
-exports.IntegerLiteral = exports.IntegerLiteralCodec = void 0;
+exports.Date = exports.DateCodec = exports.IntegerLiteral = exports.IntegerLiteralCodec = void 0;
 const utils = require("./utils");
 class Packet {
     constructor() { }
@@ -887,3 +887,18 @@ exports.IntegerLiteral = {
         return new IntegerLiteralCodec(value);
     }
 };
+class DateCodec extends Codec {
+    constructor() {
+        super();
+    }
+    decodePayload(parser, path = "") {
+        let subject = exports.Integer.decodePayload(parser, path);
+        return new globalThis.Date(subject);
+    }
+    encodePayload(subject, path = "") {
+        return exports.Integer.encodePayload(subject.getTime(), path);
+    }
+}
+exports.DateCodec = DateCodec;
+;
+exports.Date = new DateCodec();
